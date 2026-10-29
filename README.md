@@ -10,6 +10,7 @@ A personal work dashboard in a single HTML file. Open it in Chrome and it works 
 - **Wins log**: record accomplishments by category
 - **Meetings**: recurring meeting rules (weekly, every N weeks, monthly) plus one-off meetings
 - **Notes**: daily notes plus long-lived sticky notes
+- **Account check-ins**: track accounts that lock if you don't log in every 30 days, with a warning when a deadline is close
 - **1:1 report generator**: monthly or quarterly summaries you can copy or print
 - **History and search** across all days
 - **Extras**: quote of the day, KJV verse of the day, quick links, GitLab quick open, countdowns, focus timer, snippets

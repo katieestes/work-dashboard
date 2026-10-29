@@ -373,6 +373,23 @@ ul.plain { list-style: none; margin: 0; padding: 0; display: grid; gap: .35rem; 
 .countdown .cd-days { font-weight: 750; color: var(--accent); white-space: nowrap; }
 .countdown.passed { opacity: .55; }
 
+/* Account check-ins */
+.banner.warn { background: var(--accent-2-soft); }
+.banner.warn ul { margin: .3rem 0 0; padding-left: 1.1rem; }
+.banner.warn li { margin: .15rem 0; }
+.login { background: var(--soft); border-radius: 14px; padding: .6rem .8rem; display: grid; gap: .3rem; border-left: 4px solid transparent; }
+.login.warn { border-left-color: var(--accent-2); }
+.login.danger, .login.overdue { border-left-color: var(--danger); }
+.login-top { display: flex; justify-content: space-between; align-items: center; gap: .5rem; }
+.login-name { font-weight: 700; }
+.login-days { font-weight: 750; white-space: nowrap; }
+.login-days.ok { color: var(--success); }
+.login-days.warn { color: var(--accent-2); }
+.login-days.danger, .login-days.overdue { color: var(--danger); }
+.login-days.unset { color: var(--muted); font-weight: 600; }
+.login-edit { display: grid; gap: .4rem; padding: .7rem; border: 1px solid var(--border); border-radius: 14px; grid-template-columns: minmax(0, 1fr); }
+.login-edit .grid-fields { display: grid; gap: .4rem; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+
 /* Focus timer */
 .focus-time { font-size: 2.8rem; font-weight: 750; font-variant-numeric: tabular-nums; text-align: center; line-height: 1.1; }
 .focus-mode { text-align: center; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; font-size: .78rem; font-weight: 700; }
@@ -566,6 +583,7 @@ dialog.small-dlg { width: min(420px, 92vw); }
       <div class="banner error" id="saveBanner" hidden role="alert"></div>
       <div class="banner" id="viewBanner" hidden></div>
       <div class="banner" id="carryBanner" hidden></div>
+      <div class="banner warn" id="loginBanner" hidden></div>
     </div>
 
     <section class="stats" data-panel="stats" aria-label="Summary">
@@ -621,6 +639,11 @@ dialog.small-dlg { width: min(420px, 92vw); }
     </section>
 
     <div class="cards">
+      <section class="card" data-panel="logins" aria-labelledby="h-logins">
+        <div class="card-head"><h2 id="h-logins"><span class="ico" data-icon="key"></span>Account Check-ins</h2><button class="btn-link" id="editLoginsBtn" type="button">Edit</button></div>
+        <div id="loginsBody"></div>
+      </section>
+
       <section class="card" data-panel="wins" aria-labelledby="h-wins">
         <div class="card-head"><h2 id="h-wins"><span class="ico" data-icon="trophy"></span>Wins Log</h2><span class="card-sub" id="winCounts"></span></div>
         <div role="group" class="row" id="winForm">
@@ -1161,6 +1184,7 @@ const PANELS = [
   { id: 'quote',      name: 'Quote of the Day' },
   { id: 'verse',      name: 'Verse of the Day' },
   { id: 'links',      name: 'Links & GitLab' },
+  { id: 'logins',     name: 'Account Check-ins' },
   { id: 'countdowns', name: 'Countdowns' },
   { id: 'focus',      name: 'Focus Timer' },
   { id: 'snippets',   name: 'Snippets' },
@@ -1213,7 +1237,8 @@ const ICONS = {
   hourglass: '<path d="M6 3h12M6 21h12M7 3c0 5 5 6 5 9s-5 4-5 9M17 3c0 5-5 6-5 9s5 4 5 9"/>',
   target: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
   copy: '<rect x="8" y="8" width="13" height="13" rx="3"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/>',
-  pin: '<path d="M9 3h6l-1 6 4 3v2H6v-2l4-3zM12 14v7"/>'
+  pin: '<path d="M9 3h6l-1 6 4 3v2H6v-2l4-3zM12 14v7"/>',
+  key: '<circle cx="7.5" cy="15.5" r="4.5"/><path d="m10.7 12.3 9.3-9.3M16.5 6.5l3 3M14 9l2.5 2.5"/>'
 };
 
 function icon(name) {
@@ -1425,6 +1450,7 @@ function defaultState() {
     countdowns: [
       { id: uid(), name: 'Christmas', date: nextDateFor(12, 25) }
     ],
+    logins: [],          // accounts that lock without regular logins: { id, name, url, every, last }
     meetings: [],        // recurring meeting rules
     oneOffMeetings: [],  // { id, date, title, start, end, link }
     meetingSkips: [],    // "meetingId@YYYY-MM-DD" strings
@@ -1440,7 +1466,7 @@ function migrate(s) {
   if (!s || typeof s !== 'object') return d;
   const out = { ...d, ...s };
   out.settings = { ...d.settings, ...(s.settings || {}) };
-  for (const key of ['stickyNotes', 'links', 'snippets', 'countdowns', 'meetings', 'oneOffMeetings', 'meetingSkips']) {
+  for (const key of ['stickyNotes', 'links', 'snippets', 'countdowns', 'logins', 'meetings', 'oneOffMeetings', 'meetingSkips']) {
     if (!Array.isArray(out[key])) out[key] = d[key];
   }
   if (!Array.isArray(out.settings.hiddenPanels)) out.settings.hiddenPanels = [];
@@ -1562,6 +1588,7 @@ function renderBackupStatus() {
 function applyPanelVisibility() {
   const hidden = state.settings.hiddenPanels || [];
   document.querySelectorAll('[data-panel]').forEach(sec => { sec.hidden = hidden.includes(sec.dataset.panel); });
+  if (state.logins) renderLoginBanner();
 }
 
 /* =====================================================================
@@ -2320,6 +2347,125 @@ function renderCountdowns() {
 }
 
 /* =====================================================================
+   17b. ACCOUNT CHECK-INS
+   Accounts that lock or expire if you don't log in every N days.
+   Each account: { id, name, url, every (days), last ("YYYY-MM-DD" of your last login) }
+   Only names, links and dates are stored here. Never store passwords.
+   ===================================================================== */
+let loginsEditing = false;
+const LOGIN_WARN_DAYS = 7;   // card turns orange this many days before the deadline
+const LOGIN_BANNER_DAYS = 5; // warning bar at the top appears this many days before
+
+function loginInfo(a) {
+  const every = Math.max(1, Number(a.every) || 30);
+  if (!a.last) return { every, due: null, left: null, level: 'unset' };
+  const due = addDays(a.last, every);
+  const left = daysBetween(today, due);
+  const level = left < 0 ? 'overdue' : left <= 3 ? 'danger' : left <= LOGIN_WARN_DAYS ? 'warn' : 'ok';
+  return { every, due, left, level };
+}
+
+function loginDaysLabel(info) {
+  if (info.left == null) return 'Add last login';
+  if (info.left < 0) return `${-info.left} day${info.left === -1 ? '' : 's'} overdue`;
+  if (info.left === 0) return 'Log in today!';
+  if (info.left === 1) return '1 day left';
+  return `${info.left} days left`;
+}
+
+function markLoggedIn(id) {
+  const a = state.logins.find(x => x.id === id);
+  if (!a) return;
+  const before = a.last;
+  a.last = today;
+  save(); renderLogins();
+  toast(`${a.name || 'Account'}: logged in today ✓`, {
+    label: 'Undo', run: () => { a.last = before; save(); renderLogins(); }
+  });
+}
+
+function loginOpenLink(a, label) {
+  const url = (a.url || '').trim();
+  return url ? h('a', { class: 'btn small', href: url, target: '_blank', rel: 'noopener' }, label) : null;
+}
+
+function renderLogins() {
+  $('#editLoginsBtn').textContent = loginsEditing ? 'Done' : 'Edit';
+  const body = $('#loginsBody');
+  if (!loginsEditing) {
+    const list = [...state.logins].sort((a, b) => {
+      const ia = loginInfo(a), ib = loginInfo(b);
+      return (ia.left ?? -9999) - (ib.left ?? -9999); // most urgent (and unset) first
+    });
+    fill(body, list.length
+      ? h('ul', { class: 'plain' }, list.map(a => {
+        const info = loginInfo(a);
+        const doneToday = a.last === today;
+        return h('li', { class: 'login ' + info.level },
+          h('div', { class: 'login-top' },
+            h('span', { class: 'login-name' }, a.name || '(unnamed account)'),
+            h('span', { class: 'login-days ' + info.level }, loginDaysLabel(info))),
+          h('div', { class: 'small muted' }, a.last
+            ? `Last login: ${fmtDateShort(a.last)} · Log in by ${fmtDateShort(info.due)}`
+            : `Every ${info.every} days · click Edit to add your last login date`),
+          h('div', { class: 'row' },
+            h('button', { class: 'btn small ' + (doneToday ? '' : 'soft'), type: 'button', disabled: doneToday, onclick: () => markLoggedIn(a.id) },
+              doneToday ? '✓ Logged in today' : 'I logged in today'),
+            loginOpenLink(a, 'Open site')));
+      }))
+      : h('div', { class: 'edit-stack' },
+        h('p', { class: 'empty' }, "Track accounts that lock if you don't log in regularly."),
+        h('div', null, h('button', { class: 'btn small', type: 'button', onclick: () => { loginsEditing = true; addLogin(); } }, '+ Add account'))));
+  } else {
+    fill(body, h('div', { class: 'edit-stack' },
+      state.logins.map(a => h('div', { class: 'login-edit' },
+        h('div', { class: 'edit-row' },
+          h('input', { type: 'text', value: a.name || '', placeholder: 'Account name', 'aria-label': 'Account name', oninput: e => { a.name = e.target.value; save(); renderLoginBanner(); } }),
+          h('button', {
+            class: 'icon-btn', type: 'button', title: 'Delete', 'aria-label': 'Delete account',
+            onclick: async () => {
+              if (!(await askConfirm(`Stop tracking "${a.name || 'this account'}"?`, 'Remove'))) return;
+              state.logins = state.logins.filter(x => x.id !== a.id);
+              save(); renderLogins();
+            }
+          }, icon('x'))),
+        h('input', { type: 'url', value: a.url || '', placeholder: 'Login page link (optional)', 'aria-label': 'Login page link', oninput: e => { a.url = e.target.value.trim(); save(); } }),
+        h('div', { class: 'grid-fields' },
+          field('Must log in every (days)', h('input', { type: 'number', min: '1', max: '365', value: a.every || 30, oninput: e => { const v = Number(e.target.value); if (v > 0) { a.every = v; save(); renderLoginBanner(); } } })),
+          field('Last login', h('input', { type: 'date', value: a.last || '', max: today, onchange: e => { a.last = e.target.value; save(); renderLoginBanner(); } }))))),
+      h('div', null, h('button', { class: 'btn small', type: 'button', onclick: addLogin }, '+ Add account')),
+      h('p', { class: 'small muted' }, 'Only the name, link and dates are saved. Never put passwords here.')));
+  }
+  renderLoginBanner();
+}
+
+function addLogin() {
+  state.logins.push({ id: uid(), name: '', url: '', every: 30, last: today });
+  save(); renderLogins();
+  const inputs = document.querySelectorAll('#loginsBody .login-edit input[type=text]');
+  if (inputs.length) inputs[inputs.length - 1].focus();
+}
+
+/** Warning bar at the top of the page when a deadline is close or has passed. */
+function renderLoginBanner() {
+  const b = $('#loginBanner');
+  const hiddenPanel = (state.settings.hiddenPanels || []).includes('logins');
+  const urgent = state.logins.map(a => ({ a, info: loginInfo(a) }))
+    .filter(x => x.info.left != null && x.info.left <= LOGIN_BANNER_DAYS && x.a.last !== today)
+    .sort((x, y) => x.info.left - y.info.left);
+  if (hiddenPanel || !urgent.length) { b.hidden = true; return; }
+  fill(b, h('div', { style: 'flex:1;min-width:14rem' },
+    h('strong', null, '🔑 Account log-ins due soon'),
+    h('ul', null, urgent.map(({ a, info }) => h('li', null,
+      h('strong', null, a.name || 'Account'), ' — ',
+      info.left < 0 ? `overdue by ${-info.left} day${info.left === -1 ? '' : 's'} (was due ${fmtDateShort(info.due)})`
+        : info.left === 0 ? 'log in today' : `log in by ${fmtDateShort(info.due)} (${loginDaysLabel(info)})`,
+      ' ', loginOpenLink(a, 'Open'), ' ',
+      h('button', { class: 'btn small primary', type: 'button', onclick: () => markLoggedIn(a.id) }, 'I logged in'))))));
+  b.hidden = false;
+}
+
+/* =====================================================================
    18. FOCUS TIMER (Pomodoro)
    Kept in memory only. Uses an end timestamp so it stays accurate.
    ===================================================================== */
@@ -2874,6 +3020,7 @@ function renderAll() {
   renderSticky();
   renderLinks();
   renderCountdowns();
+  renderLogins();
   renderSnippets();
   renderFocus();
 }
@@ -2964,6 +3111,7 @@ function wireEvents() {
   $('#editLinksBtn').addEventListener('click', () => { linksEditing = !linksEditing; renderLinks(); });
   onSubmit('#gitlabForm', openGitlab);
   $('#editCountdownsBtn').addEventListener('click', () => { countdownsEditing = !countdownsEditing; renderCountdowns(); });
+  $('#editLoginsBtn').addEventListener('click', () => { loginsEditing = !loginsEditing; renderLogins(); });
   $('#editSnippetsBtn').addEventListener('click', () => { snippetsEditing = !snippetsEditing; renderSnippets(); });
 
   // Focus timer
@@ -3029,6 +3177,7 @@ function tick() {
     lastMinute = minute;
     renderMeetings();
     if (!countdownsEditing) renderCountdowns(); // don't wipe the edit form while typing
+    if (!loginsEditing) renderLogins(); else renderLoginBanner();
     renderBackupStatus();
     if (isToday()) renderChart();
   }
