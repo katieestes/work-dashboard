@@ -1,0 +1,3048 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="soft-light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Dashboard</title>
+<!--
+  ================================================================
+  MY WORK DASHBOARD  (single file: HTML + CSS + JavaScript)
+  ================================================================
+
+  HOW TO SET THIS AS YOUR CHROME STARTUP PAGE / HOMEPAGE
+  1. Save this file somewhere permanent, e.g.  C:\Users\YOU\Dashboard\dashboard.html
+  2. Open it in Chrome (double-click it, or drag it into Chrome).
+  3. Copy the address from the address bar. It will look like:
+        file:///C:/Users/YOU/Dashboard/dashboard.html
+  4. Chrome menu (⋮) > Settings > "On startup" > "Open a specific page or set of pages"
+     > "Add a new page" > paste the address.
+  5. (Optional) Settings > Appearance > turn on "Show home button" and paste the same address.
+  Note: Chrome does not allow a local file as the New Tab page without an extension.
+
+  WHERE YOUR DATA LIVES
+  - Everything you type is saved in Chrome's "localStorage" on THIS computer, in THIS Chrome profile,
+    for THIS file location. Keep the file in one place.
+  - It is NOT saved inside this file, so replacing this file with a newer version keeps your data.
+  - If Chrome's browsing data is cleared ("Cookies and other site data"), your data is erased.
+    => Use "Export backup" regularly. It downloads a .json file you can re-load with "Import".
+
+  HOW THE CODE IS ORGANIZED (search for these headings)
+  - <style>                  : THEMES (CSS variables), then LAYOUT, then each area of the page
+  - <body>                   : sidebar, main column, right column, dialogs
+  - QUOTES / VERSES          : the daily quote and verse lists (add more anytime)
+  - Numbered sections in the APPLICATION CODE script: one per feature
+  ================================================================
+-->
+<style>
+/* =====================================================================
+   THEMES
+   Each theme is one block of CSS variables. To add a theme:
+   1. Copy a block below, give it a new data-theme name, change the colors.
+   2. Add it to the THEMES list near the top of the APPLICATION CODE script.
+   Variables:
+     --bg          page background behind the app
+     --surface     the big rounded app panel
+     --card        cards inside the app
+     --soft        soft boxes, inputs, icon circles
+     --border      lines and dividers
+     --text/--muted  main and secondary text
+     --accent      main color (buttons, links, chart line)
+     --accent-2    second color (chart comparison line, highlights)
+     --*-soft      pale versions of the accents (bubbles, chips)
+   ===================================================================== */
+:root, [data-theme="soft-light"] {
+  color-scheme: light;
+  --bg: #e3e2e6; --surface: #ffffff; --card: #ffffff; --soft: #f4f4f7; --border: #ebebf0;
+  --text: #17171f; --muted: #767684;
+  --accent: #3b7bd6; --accent-soft: #e5eefb; --accent-2: #ec9a4d; --accent-2-soft: #fdeedd;
+  --on-accent: #ffffff; --success: #2f9e73; --danger: #e0454b; --warning: #c27a1f;
+  --mark: #fff0a8; --tip-bg: #15151c; --tip-text: #ffffff;
+}
+[data-theme="espresso"] {
+  color-scheme: dark;
+  --bg: #100a07; --surface: #1d1410; --card: #241913; --soft: #2d2019; --border: #3a2a20;
+  --text: #f3e6d6; --muted: #bba590;
+  --accent: #dba26a; --accent-soft: #3e2c1e; --accent-2: #e07a5f; --accent-2-soft: #43251d;
+  --on-accent: #1c130f; --success: #a9d68f; --danger: #f08f80; --warning: #f2c777;
+  --mark: #7a5230; --tip-bg: #f3e6d6; --tip-text: #1d1410;
+}
+[data-theme="latte"] {
+  color-scheme: light;
+  --bg: #e6d9c9; --surface: #fffaf4; --card: #fffaf4; --soft: #f5ebdf; --border: #ecdccb;
+  --text: #3a291e; --muted: #7d6754;
+  --accent: #8a5a3b; --accent-soft: #f1e2d2; --accent-2: #c9884f; --accent-2-soft: #f8e7d3;
+  --on-accent: #ffffff; --success: #4f7d36; --danger: #b4402f; --warning: #9a6a10;
+  --mark: #f1d3a8; --tip-bg: #3a291e; --tip-text: #fffaf4;
+}
+[data-theme="blush"] {
+  color-scheme: light;
+  --bg: #f4dde4; --surface: #ffffff; --card: #ffffff; --soft: #fdf1f4; --border: #f5dbe3;
+  --text: #3d2430; --muted: #876270;
+  --accent: #c03d6c; --accent-soft: #fbe3eb; --accent-2: #e39a55; --accent-2-soft: #fdeedd;
+  --on-accent: #ffffff; --success: #3f7a43; --danger: #b3261e; --warning: #9a6200;
+  --mark: #ffd0de; --tip-bg: #3d2430; --tip-text: #ffffff;
+}
+[data-theme="rosewood"] {
+  color-scheme: dark;
+  --bg: #150910; --surface: #25121d; --card: #2c1623; --soft: #361b2b; --border: #47263a;
+  --text: #f9e4ed; --muted: #c99fb2;
+  --accent: #f293b4; --accent-soft: #4a2236; --accent-2: #f2c48d; --accent-2-soft: #45301f;
+  --on-accent: #21101a; --success: #a9d68f; --danger: #ff9a8a; --warning: #f2c777;
+  --mark: #7d3558; --tip-bg: #f9e4ed; --tip-text: #25121d;
+}
+[data-theme="mocharose"] {
+  color-scheme: light;
+  --bg: #e2d0c7; --surface: #fbf5f1; --card: #fbf5f1; --soft: #f3e6e0; --border: #ead8d0;
+  --text: #3e2a26; --muted: #7d625b;
+  --accent: #9a545b; --accent-soft: #f2dcdc; --accent-2: #b5835a; --accent-2-soft: #f1e2d3;
+  --on-accent: #ffffff; --success: #4a7a3a; --danger: #a8352b; --warning: #8f630e;
+  --mark: #f0c9c4; --tip-bg: #3e2a26; --tip-text: #fbf5f1;
+}
+[data-theme="classic-light"] {
+  color-scheme: light;
+  --bg: #eceef2; --surface: #ffffff; --card: #ffffff; --soft: #f3f5f8; --border: #e5e8ec;
+  --text: #1f2328; --muted: #5d6570;
+  --accent: #2f6fde; --accent-soft: #e3ecfb; --accent-2: #e8832f; --accent-2-soft: #fdecdc;
+  --on-accent: #ffffff; --success: #2e7d32; --danger: #c62828; --warning: #8d6200;
+  --mark: #fff0a8; --tip-bg: #1f2328; --tip-text: #ffffff;
+}
+[data-theme="classic-dark"] {
+  color-scheme: dark;
+  --bg: #0b0d10; --surface: #16191e; --card: #1b1f25; --soft: #22272e; --border: #2e343c;
+  --text: #e8eaed; --muted: #9aa1ab;
+  --accent: #74abff; --accent-soft: #1f2f47; --accent-2: #f5a65b; --accent-2-soft: #3a2a1a;
+  --on-accent: #0f1115; --success: #9ccc65; --danger: #ff8a80; --warning: #ffd54f;
+  --mark: #5b4a12; --tip-bg: #e8eaed; --tip-text: #16191e;
+}
+
+/* =====================================================================
+   BASE
+   ===================================================================== */
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { font-size: 15px; }
+body {
+  margin: 0; min-height: 100vh; padding: 28px;
+  font-family: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.45; color: var(--text); background: var(--bg);
+}
+a { color: var(--accent); }
+h1, h2, h3, p { margin: 0; }
+h1, h2, h3 { line-height: 1.2; letter-spacing: -.01em; }
+.muted { color: var(--muted); }
+.small { font-size: .85rem; }
+.empty { color: var(--muted); margin: .25rem 0; }
+.visually-hidden { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+mark { background: var(--mark); color: inherit; border-radius: 3px; padding: 0 2px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.ico { display: inline-flex; width: 1.3em; height: 1.3em; flex: none; }
+.ico svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Form controls */
+input[type="text"], input[type="url"], input[type="number"], input[type="time"], input[type="date"], input[type="search"], textarea, select {
+  font: inherit; color: var(--text); background: var(--soft);
+  border: 1px solid transparent; border-radius: 12px; padding: .5rem .7rem; min-width: 0;
+}
+textarea { width: 100%; resize: vertical; min-height: 4.5rem; }
+input:focus, textarea:focus, select:focus { border-color: var(--accent); outline: none; background: var(--surface); }
+input[type="checkbox"] { accent-color: var(--accent); width: 1.05rem; height: 1.05rem; }
+label { cursor: pointer; }
+
+/* Buttons */
+.btn {
+  font: inherit; font-size: .9rem; font-weight: 600; cursor: pointer; white-space: nowrap; text-decoration: none;
+  color: var(--text); background: var(--soft); border: 1px solid transparent; border-radius: 999px;
+  padding: .45rem 1rem; display: inline-flex; align-items: center; gap: .4rem;
+}
+.btn:hover { border-color: var(--border); filter: brightness(.98); }
+.btn.primary { background: var(--accent); color: var(--on-accent); }
+.btn.primary:hover { filter: brightness(1.08); }
+.btn.soft { background: var(--accent-soft); color: var(--accent); }
+.btn.danger { color: var(--danger); }
+.btn.small { font-size: .8rem; padding: .25rem .7rem; }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn-link { font: inherit; font-size: .85rem; font-weight: 600; background: none; border: none; color: var(--accent); cursor: pointer; padding: .15rem .3rem; }
+.btn-link:hover { text-decoration: underline; }
+.icon-btn {
+  font: inherit; cursor: pointer; background: none; border: none; color: var(--muted);
+  border-radius: 50%; width: 2rem; height: 2rem; display: inline-flex; align-items: center; justify-content: center; flex: none;
+}
+.icon-btn .ico { width: 1.05rem; height: 1.05rem; }
+.icon-btn:hover:not(:disabled) { color: var(--text); background: var(--soft); }
+.icon-btn.active { color: var(--accent-2); }
+.icon-btn.active svg { fill: currentColor; }
+.icon-btn:disabled { opacity: .3; cursor: default; }
+.circle-btn {
+  width: 3.4rem; height: 3.4rem; border-radius: 50%; border: none; cursor: pointer; flex: none;
+  background: var(--surface); color: var(--text); display: inline-flex; align-items: center; justify-content: center;
+  box-shadow: 0 1px 2px rgba(0,0,0,.06);
+}
+.circle-btn .ico { width: 1.35rem; height: 1.35rem; }
+.circle-btn:hover:not(:disabled) { background: var(--accent-soft); color: var(--accent); }
+.circle-btn.primary { background: var(--accent); color: var(--on-accent); }
+.circle-btn:disabled { opacity: .35; cursor: not-allowed; }
+.chip {
+  display: inline-flex; align-items: center; gap: .3rem; font-size: .74rem; font-weight: 600; padding: .12rem .55rem;
+  border-radius: 999px; background: var(--soft); color: var(--muted); white-space: nowrap;
+}
+.chip.accent { background: var(--accent-soft); color: var(--accent); }
+.chip.accent-2 { background: var(--accent-2-soft); color: var(--accent-2); }
+.row { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
+.row > .grow { flex: 1 1 8rem; }
+.dot { width: .5rem; height: .5rem; border-radius: 50%; display: inline-block; flex: none; background: var(--muted); }
+
+/* =====================================================================
+   LAYOUT: sidebar | main | right column, inside one rounded panel
+   ===================================================================== */
+.app {
+  max-width: 1720px; margin: 0 auto; min-height: calc(100vh - 56px);
+  background: var(--surface); border-radius: 30px; box-shadow: 0 40px 80px -40px rgba(0,0,0,.35);
+  display: grid; grid-template-columns: 250px minmax(0, 1fr) 390px;
+}
+.sidebar {
+  border-right: 1px solid var(--border); padding: 34px 22px 26px;
+  display: flex; flex-direction: column; gap: 30px;
+  position: sticky; top: 28px; align-self: start; height: calc(100vh - 56px); overflow: auto;
+}
+.main { padding: 40px 44px 48px; display: grid; gap: 34px; align-content: start; min-width: 0; grid-template-columns: minmax(0, 1fr); }
+.aside { border-left: 1px solid var(--border); padding: 20px; display: grid; gap: 22px; align-content: start; min-width: 0; grid-template-columns: minmax(0, 1fr); }
+
+@media (max-width: 1320px) {
+  .app { grid-template-columns: 230px minmax(0, 1fr); }
+  .aside { grid-column: 2; border-left: none; border-top: 1px solid var(--border); padding: 28px 44px 44px;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); align-items: start; }
+}
+@media (max-width: 880px) {
+  body { padding: 0; }
+  .app { grid-template-columns: minmax(0, 1fr); border-radius: 0; min-height: 100vh; }
+  .sidebar { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border); padding: 16px; gap: 14px; }
+  .nav { flex-direction: row !important; flex-wrap: wrap; }
+  .sidebar-bottom { display: none !important; }
+  .main { padding: 24px 16px; }
+  .aside { grid-column: 1; padding: 20px 16px; }
+  .stat { border-left: none; padding-left: 0; }
+}
+
+/* =====================================================================
+   SIDEBAR
+   ===================================================================== */
+.brand { display: flex; align-items: center; gap: .6rem; font-size: 1.55rem; font-weight: 750; letter-spacing: -.02em; padding: 0 .5rem; }
+.brand .ico { width: 2.1rem; height: 2.1rem; color: var(--text); }
+.brand .ico svg { fill: currentColor; stroke: none; }
+.nav { display: flex; flex-direction: column; gap: .3rem; }
+.nav-item {
+  font: inherit; font-size: 1.05rem; text-align: left; cursor: pointer; color: var(--muted);
+  background: none; border: none; border-radius: 14px; padding: .65rem .8rem; display: flex; align-items: center; gap: .9rem;
+}
+.nav-item .ico { width: 1.35rem; height: 1.35rem; }
+.nav-item:hover { background: var(--soft); color: var(--text); }
+.nav-item.active { color: var(--text); font-weight: 650; }
+.sidebar-bottom { margin-top: auto; display: grid; gap: 18px; }
+.backup-card {
+  background: linear-gradient(180deg, var(--soft), transparent); border-radius: 22px;
+  padding: 24px 18px 20px; text-align: center; display: grid; gap: .5rem; justify-items: center;
+}
+.backup-card h3 { font-size: 1.1rem; }
+.backup-card .warn { color: var(--warning); font-weight: 600; }
+.backup-card .btn { margin-top: .4rem; padding: .7rem 1.8rem; }
+.theme-pick { display: grid; gap: .35rem; padding: 0 .5rem; }
+.theme-pick span { display: flex; align-items: center; gap: .5rem; color: var(--muted); font-size: .9rem; }
+.theme-pick select { width: 100%; }
+
+/* =====================================================================
+   MAIN: greeting header, stats row, chart, objectives
+   ===================================================================== */
+.hello { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; }
+.hello h1 { font-size: 2.35rem; font-weight: 750; }
+.hello p { color: var(--muted); font-size: 1.08rem; margin-top: .55rem; }
+.date-box { display: flex; align-items: center; gap: .6rem; }
+.date-box .date-text { text-align: right; line-height: 1.25; }
+.date-box .date-text strong { display: block; font-weight: 600; }
+.date-box .date-text span { color: var(--muted); font-size: .88rem; font-variant-numeric: tabular-nums; }
+.round { width: 2.9rem; height: 2.9rem; border-radius: 50%; background: var(--soft); border: none; cursor: pointer; color: var(--text);
+  display: inline-flex; align-items: center; justify-content: center; flex: none; }
+.round .ico { width: 1.3rem; height: 1.3rem; }
+.round:hover { background: var(--accent-soft); color: var(--accent); }
+.round.sm { width: 2.2rem; height: 2.2rem; }
+.round.sm .ico { width: 1.05rem; height: 1.05rem; }
+
+.banners { display: grid; gap: .6rem; }
+.banners:not(:has(> :not([hidden]))) { display: none; } /* no empty gap when there are no messages */
+.banner { display: flex; flex-wrap: wrap; gap: .7rem; align-items: center; justify-content: space-between;
+  background: var(--accent-soft); border-radius: 18px; padding: .8rem 1.1rem; }
+.banner.error { background: var(--accent-2-soft); color: var(--text); }
+.banner .carry-pick { flex-basis: 100%; display: grid; gap: .3rem; }
+
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 28px 0; row-gap: 24px; }
+.stat { display: flex; align-items: center; gap: 1rem; padding: 0 1.4rem; border-left: 1px solid var(--border); }
+.stat:first-child { border-left: none; padding-left: 0; }
+.stat-icon { width: 3.9rem; height: 3.9rem; border-radius: 50%; background: var(--soft); display: inline-flex; align-items: center; justify-content: center; flex: none; }
+.stat-icon .ico { width: 1.6rem; height: 1.6rem; }
+.stat-label { font-size: 1.05rem; font-weight: 550; }
+.stat-value { display: flex; align-items: baseline; gap: .55rem; flex-wrap: wrap; margin-top: .15rem; }
+.stat-value strong { font-size: 1.55rem; font-weight: 750; font-variant-numeric: tabular-nums; }
+.delta { font-size: .88rem; font-weight: 600; white-space: nowrap; }
+.delta.up { color: var(--success); }
+.delta.down { color: var(--danger); }
+.delta.flat { color: var(--muted); }
+
+.section-head { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.1rem; }
+.section-head h2 { font-size: 1.55rem; font-weight: 750; }
+.section-head .sep { width: 1px; height: 1.6rem; background: var(--border); margin: 0 .8rem; }
+.title-row { display: flex; align-items: center; }
+.pill-select { border-radius: 999px; padding: .5rem 1rem; font-weight: 600; font-size: .92rem; }
+
+/* Chart */
+.chart-wrap { position: relative; }
+.chart-wrap svg { width: 100%; height: auto; display: block; overflow: hidden; }
+.chart-legend { display: flex; gap: 1.2rem; align-items: center; color: var(--muted); font-size: .88rem; }
+.chart-legend i { display: inline-block; width: .9rem; height: .22rem; border-radius: 2px; margin-right: .4rem; vertical-align: middle; }
+.chart-tip {
+  position: absolute; pointer-events: none; background: var(--tip-bg); color: var(--tip-text); border-radius: 14px;
+  padding: .7rem .9rem; font-size: .88rem; min-width: 170px; box-shadow: 0 12px 30px rgba(0,0,0,.25); transform: translate(-50%, -100%);
+}
+.chart-tip strong { display: block; margin-bottom: .35rem; }
+.chart-tip div { display: flex; justify-content: space-between; gap: 1rem; padding-left: .6rem; border-left: 2px solid; margin-top: .2rem; opacity: .9; }
+.axis-text { font-size: 12px; fill: var(--muted); }
+.axis-today { fill: var(--text); font-weight: 700; }
+
+/* Objectives (task list) */
+.task-form { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; margin-bottom: .8rem; }
+.task-form input[type="text"] { flex: 1 1 14rem; }
+.task-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); }
+.task { display: grid; grid-template-columns: 3.4rem minmax(0, 1fr) 9.5rem auto; gap: .9rem; align-items: center; padding: .5rem 0; }
+.task-check {
+  width: 3.2rem; height: 3.2rem; border-radius: 50%; border: none; cursor: pointer; background: var(--soft); color: var(--text);
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.task-check .ico { width: 1.4rem; height: 1.4rem; }
+.task:nth-child(3n+1) .task-check { background: var(--accent-soft); }
+.task:nth-child(3n+2) .task-check { background: var(--accent-2-soft); }
+.task-check:hover { color: var(--accent); }
+.task-main { display: flex; align-items: center; gap: .5rem; min-width: 0; }
+.task-text { flex: 1; min-width: 0; font-weight: 550; background: transparent !important; border-color: transparent !important; padding: .35rem .4rem !important; }
+.task-text:focus { background: var(--soft) !important; }
+.task.done .task-text { text-decoration: line-through; color: var(--muted); }
+.task.carried { opacity: .55; }
+.task-status { display: flex; align-items: center; gap: .5rem; font-weight: 550; font-size: .95rem; }
+.task-actions { display: flex; gap: .05rem; }
+@media (max-width: 640px) {
+  .task { grid-template-columns: 3rem minmax(0, 1fr) auto; }
+  .task-status { display: none; }
+}
+
+/* Cards grid (the smaller panels under the objectives) */
+.cards { display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); align-items: start; grid-auto-flow: dense; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 24px; padding: 20px 22px 22px; display: grid; gap: .8rem; min-width: 0; grid-template-columns: minmax(0, 1fr); }
+.card.wide { grid-column: 1 / -1; }
+.card-head { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
+.card-head h2 { font-size: 1.1rem; font-weight: 700; display: flex; align-items: center; gap: .55rem; }
+.card-head h2 .ico { color: var(--accent); }
+.card-sub { color: var(--muted); font-size: .82rem; }
+ul.plain { list-style: none; margin: 0; padding: 0; display: grid; gap: .35rem; grid-template-columns: minmax(0, 1fr); }
+.edit-stack, .setting-group, .oneoff-form { grid-template-columns: minmax(0, 1fr); }
+.edit-stack { display: grid; gap: .5rem; }
+.edit-row { display: flex; gap: .35rem; align-items: center; }
+.edit-row > input { flex: 1 1 6rem; }
+.subsection { border-top: 1px solid var(--border); padding-top: .8rem; display: grid; gap: .5rem; }
+.subsection h3 { font-size: .78rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+
+/* Wins */
+.win { display: flex; gap: .45rem; align-items: center; }
+.win .task-text { flex: 1; }
+
+/* Quote & verse */
+.quote-text, .verse-text { font-family: Georgia, "Times New Roman", serif; font-size: 1.12rem; line-height: 1.6; }
+.quote-author, .verse-ref { color: var(--muted); font-weight: 650; text-align: right; }
+.quote-mark { font-family: Georgia, serif; font-size: 3rem; line-height: .5; color: var(--accent); height: 1.2rem; }
+
+/* Sticky notes */
+.sticky-grid { display: grid; gap: .8rem; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+.sticky { background: var(--soft); border-radius: 18px; padding: .6rem; display: grid; gap: .35rem; grid-template-columns: minmax(0, 1fr); }
+.sticky:nth-child(3n+1) { background: var(--accent-soft); }
+.sticky:nth-child(3n+2) { background: var(--accent-2-soft); }
+.sticky-head { display: flex; gap: .1rem; align-items: center; }
+.sticky-head input { flex: 1; font-weight: 700; background: transparent; }
+.sticky textarea { background: var(--surface); min-height: 7rem; }
+
+/* Links */
+.link-grid { display: flex; flex-wrap: wrap; gap: .45rem; }
+
+/* Countdowns */
+.countdown { display: flex; justify-content: space-between; align-items: center; gap: .5rem; padding: .55rem .75rem; border-radius: 14px; background: var(--soft); }
+.countdown .cd-days { font-weight: 750; color: var(--accent); white-space: nowrap; }
+.countdown.passed { opacity: .55; }
+
+/* Focus timer */
+.focus-time { font-size: 2.8rem; font-weight: 750; font-variant-numeric: tabular-nums; text-align: center; line-height: 1.1; }
+.focus-mode { text-align: center; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; font-size: .78rem; font-weight: 700; }
+.focus-mode.is-focus { color: var(--accent); }
+
+/* Snippets */
+.snippet { background: var(--soft); border-radius: 14px; padding: .55rem .7rem; display: grid; gap: .25rem; grid-template-columns: minmax(0, 1fr); }
+.snippet pre { margin: 0; font-family: Consolas, "Cascadia Code", Menlo, monospace; font-size: .82rem; white-space: pre-wrap; word-break: break-word; max-height: 7rem; overflow: auto; color: var(--muted); }
+.snippet-edit { display: grid; gap: .35rem; padding: .6rem; border: 1px solid var(--border); border-radius: 14px; grid-template-columns: minmax(0, 1fr); }
+.snippet-edit textarea { font-family: Consolas, "Cascadia Code", Menlo, monospace; font-size: .85rem; min-height: 3rem; }
+
+/* =====================================================================
+   RIGHT COLUMN: time clock card + today's meetings ("activity")
+   ===================================================================== */
+.clock-card { background: var(--soft); border-radius: 28px; padding: 28px 22px 22px; display: grid; gap: 14px; justify-items: center; text-align: center; grid-template-columns: minmax(0, 1fr); }
+.ring { position: relative; width: 9.5rem; height: 9.5rem; }
+.ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.ring .ring-track { stroke: var(--border); }
+.ring .ring-bar { stroke: var(--accent); transition: stroke-dashoffset .6s ease; }
+.ring-center { position: absolute; inset: 0; display: grid; place-content: center; }
+.ring-center strong { font-size: 1.3rem; font-weight: 750; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.ring-center span { color: var(--muted); font-size: .8rem; }
+.ring-dot { position: absolute; right: .95rem; bottom: .95rem; width: 1rem; height: 1rem; border-radius: 50%; border: 3px solid var(--soft); background: var(--muted); }
+.ring-dot.in { background: var(--success); }
+.ring-dot.break { background: var(--accent-2); }
+.clock-name { font-size: 1.2rem; font-weight: 700; }
+.clock-handle { color: var(--muted); margin-top: -8px; }
+.clock-actions { display: flex; gap: 1rem; justify-content: center; }
+.clock-actions .act { display: grid; gap: .3rem; justify-items: center; font-size: .75rem; color: var(--muted); font-weight: 600; }
+.leave { width: 100%; display: grid; gap: .45rem; }
+.leave-label { font-size: .8rem; color: var(--muted); font-weight: 600; }
+.leave-chips { display: flex; flex-wrap: wrap; gap: .35rem; justify-content: center; }
+.leave-chip { background: var(--surface); border-radius: 999px; padding: .3rem .65rem; font-size: .8rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.leave-chip b { color: var(--muted); font-weight: 600; margin-right: .3rem; }
+.leave-chip.target { background: var(--accent-soft); color: var(--accent); }
+.leave-chip.target b { color: var(--accent); }
+.leave-chip.reached { color: var(--success); }
+.target-diff { font-size: .9rem; font-weight: 600; }
+
+/* Time log */
+.timelog { width: 100%; text-align: left; background: var(--surface); border-radius: 18px; padding: .6rem .8rem; }
+.timelog > summary { cursor: pointer; font-weight: 600; font-size: .9rem; padding: .2rem 0; }
+.log-list { list-style: none; margin: .5rem 0 0; padding: 0; display: grid; gap: .15rem; }
+.log-row { display: flex; align-items: center; gap: .4rem; min-height: 2.3rem; }
+.log-type { flex: 1; font-size: .9rem; display: flex; align-items: center; gap: .5rem; }
+.log-time { font-weight: 650; font-variant-numeric: tabular-nums; font-size: .92rem; }
+.log-row input[type="time"] { flex: 1; padding: .3rem .5rem; }
+.type-in .dot { background: var(--success); }
+.type-out .dot { background: var(--danger); }
+.type-breakStart .dot, .type-breakEnd .dot { background: var(--accent-2); }
+.log-add { display: flex; gap: .35rem; align-items: center; flex-wrap: wrap; margin-top: .55rem; padding-top: .55rem; border-top: 1px solid var(--border); }
+.log-add select, .log-add input { padding: .3rem .5rem; font-size: .88rem; }
+.warning-text { color: var(--warning); font-size: .88rem; font-weight: 600; }
+
+.divider-label { display: flex; align-items: center; gap: 1rem; font-size: 1.1rem; font-weight: 600; }
+.divider-label::before, .divider-label::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+.divider-tools { display: flex; justify-content: center; gap: .6rem; margin-top: -10px; font-size: .85rem; color: var(--muted); align-items: center; }
+.activity { list-style: none; margin: 0; padding: 0 .3rem; display: grid; gap: 1.3rem; grid-template-columns: minmax(0, 1fr); }
+.act-item { display: grid; grid-template-columns: 3rem minmax(0, 1fr); gap: .8rem; }
+.act-item.past { opacity: .55; }
+.act-item.skipped .act-title { text-decoration: line-through; }
+.act-item.skipped { opacity: .5; }
+.avatar { width: 3rem; height: 3rem; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 750; font-size: .95rem; position: relative; }
+.avatar.c0 { background: var(--accent-soft); color: var(--accent); }
+.avatar.c1 { background: var(--accent-2-soft); color: var(--accent-2); }
+.avatar.c2 { background: var(--soft); color: var(--text); }
+.avatar .badge { position: absolute; right: 0; bottom: 0; width: .8rem; height: .8rem; border-radius: 50%; border: 2px solid var(--surface); background: var(--success); }
+.act-top { display: flex; justify-content: space-between; gap: .5rem; align-items: baseline; }
+.act-title { font-weight: 700; font-size: 1.02rem; }
+.act-time { color: var(--muted); font-size: .85rem; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.act-sub { color: var(--muted); font-size: .9rem; display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; margin-top: .1rem; }
+.bubble { background: var(--accent-soft); border-radius: 18px; padding: .75rem 1rem; margin-top: .6rem; font-size: .95rem; }
+.join-card { display: flex; align-items: center; gap: .7rem; background: var(--accent-soft); border-radius: 16px; padding: .6rem .8rem; margin-top: .6rem; color: var(--text); text-decoration: none; font-weight: 600; }
+.join-card .ico { width: 2.2rem; height: 2.2rem; padding: .45rem; border-radius: 50%; background: var(--text); color: var(--surface); }
+.join-card:hover { filter: brightness(.97); }
+.oneoff { padding: 0 .3rem; }
+.oneoff > summary { cursor: pointer; color: var(--muted); font-size: .9rem; font-weight: 600; }
+.oneoff-form { display: grid; gap: .45rem; margin-top: .6rem; padding: .8rem; background: var(--soft); border-radius: 18px; }
+.oneoff-form input { background: var(--surface); }
+
+/* =====================================================================
+   DIALOGS (Settings, History, Search, Report, Confirm)
+   ===================================================================== */
+dialog {
+  background: var(--surface); color: var(--text); border: none; border-radius: 26px;
+  padding: 0; width: min(800px, 94vw); max-height: 88vh; box-shadow: 0 30px 80px rgba(0,0,0,.35);
+}
+dialog::backdrop { background: rgba(10,10,15,.45); }
+dialog[open] { display: flex; flex-direction: column; }
+dialog.small-dlg { width: min(420px, 92vw); }
+.dlg-head { display: flex; justify-content: space-between; align-items: center; gap: .5rem; padding: 1.1rem 1.4rem; border-bottom: 1px solid var(--border); }
+.dlg-head h2 { font-size: 1.25rem; }
+.dlg-body { padding: 1.2rem 1.4rem 1.5rem; overflow: auto; display: grid; gap: 1.1rem; grid-template-columns: minmax(0, 1fr); }
+.setting-group { display: grid; gap: .55rem; padding-bottom: 1.1rem; border-bottom: 1px solid var(--border); }
+.setting-group:last-child { border-bottom: none; }
+.setting-group h3 { font-size: 1.02rem; }
+.field { display: grid; gap: .25rem; }
+.field > span { font-size: .85rem; color: var(--muted); }
+.check-row { display: flex; gap: .45rem; align-items: center; }
+.panel-checks { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: .35rem; }
+.meeting-card { border-radius: 18px; padding: .9rem; display: grid; gap: .55rem; background: var(--soft); grid-template-columns: minmax(0, 1fr); }
+.meeting-card .grid-fields { display: grid; gap: .5rem; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+.meeting-card input, .meeting-card select { background: var(--surface); }
+.day-checks { display: flex; gap: .6rem; flex-wrap: wrap; }
+.day-checks label { display: inline-flex; gap: .25rem; align-items: center; font-size: .88rem; }
+
+.cal-head { display: flex; justify-content: space-between; align-items: center; }
+.cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: .35rem; }
+.cal .dow { text-align: center; font-size: .75rem; color: var(--muted); }
+.cal button { font: inherit; aspect-ratio: 1.3; border-radius: 14px; border: none; background: var(--soft); color: var(--text); cursor: pointer; position: relative; }
+.cal button:hover { background: var(--accent-soft); }
+.cal button.has-data::after { content: ""; position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%); width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+.cal button.is-today { box-shadow: inset 0 0 0 2px var(--accent); }
+.cal button.is-selected { background: var(--accent); color: var(--on-accent); }
+.cal button.is-selected::after { background: var(--on-accent); }
+
+.result { text-align: left; width: 100%; font: inherit; color: var(--text); background: var(--soft); border: 1px solid transparent; border-radius: 14px; padding: .6rem .8rem; cursor: pointer; display: grid; gap: .15rem; }
+.result:hover { border-color: var(--accent); }
+
+.report-preview { background: var(--soft); border-radius: 18px; padding: 1.1rem 1.3rem; }
+.report-preview h1 { font-size: 1.3rem; margin-bottom: .2rem; }
+.report-preview h2 { font-size: 1.05rem; margin: 1rem 0 .4rem; }
+.report-preview h3 { font-size: .95rem; margin: .7rem 0 .3rem; color: var(--muted); }
+.report-preview ul { margin: .2rem 0; padding-left: 1.2rem; }
+
+/* Toast */
+#toast {
+  position: fixed; left: 50%; bottom: 1.5rem; transform: translateX(-50%) translateY(calc(100% + 2rem));
+  background: var(--tip-bg); color: var(--tip-text); padding: .6rem .7rem .6rem 1.1rem; border-radius: 999px; font-weight: 600;
+  box-shadow: 0 12px 30px rgba(0,0,0,.25); transition: transform .25s ease, opacity .25s ease; z-index: 1000; max-width: 90vw;
+  display: flex; align-items: center; gap: .8rem; opacity: 0; pointer-events: none;
+}
+#toast.show { transform: translateX(-50%) translateY(0); opacity: 1; pointer-events: auto; }
+#toast:not(:has(button)) { padding-right: 1.1rem; }
+.toast-btn { font: inherit; font-weight: 700; border: none; border-radius: 999px; padding: .25rem .8rem; cursor: pointer; background: var(--accent); color: var(--on-accent); }
+
+#printArea { display: none; }
+@media print {
+  body { background: #fff !important; color: #000 !important; padding: 0; }
+  body > *:not(#printArea) { display: none !important; }
+  #printArea { display: block !important; color: #000; font-family: Georgia, serif; }
+  #printArea .report-preview { background: #fff; padding: 0; }
+  #printArea h3 { color: #444; }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ============================ SIDEBAR ============================ -->
+  <aside class="sidebar" aria-label="Menu">
+    <div class="brand"><span class="ico" data-icon="logo"></span>Dashboard</div>
+    <nav class="nav">
+      <button class="nav-item active" id="navToday" type="button"><span class="ico" data-icon="home"></span>Today</button>
+      <button class="nav-item" id="navHistory" type="button"><span class="ico" data-icon="calendar"></span>History</button>
+      <button class="nav-item" id="navSearch" type="button"><span class="ico" data-icon="search"></span>Search</button>
+      <button class="nav-item" id="navReport" type="button"><span class="ico" data-icon="report"></span>1:1 Report</button>
+      <button class="nav-item" id="navSettings" type="button"><span class="ico" data-icon="settings"></span>Settings</button>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="backup-card">
+        <h3>Back up your data</h3>
+        <p class="small muted" id="backupText">No backup yet</p>
+        <button class="btn soft" id="exportBtn" type="button">Export</button>
+      </div>
+      <label class="theme-pick" for="themeSelect">
+        <span><span class="ico" data-icon="palette"></span>Theme</span>
+        <select id="themeSelect"></select>
+      </label>
+      <button class="nav-item" id="importBtn" type="button"><span class="ico" data-icon="upload"></span>Import backup</button>
+    </div>
+  </aside>
+
+  <!-- ============================ MAIN COLUMN ============================ -->
+  <main class="main">
+    <header class="hello">
+      <div>
+        <h1 id="greeting">Hello</h1>
+        <p id="helloSub"></p>
+      </div>
+      <div class="date-box">
+        <button class="round sm" id="prevDayBtn" type="button" title="Previous day" aria-label="Previous day"><span class="ico" data-icon="chevL"></span></button>
+        <div class="date-text"><strong id="viewDateText"></strong><span id="liveClock"></span></div>
+        <button class="round sm" id="nextDayBtn" type="button" title="Next day" aria-label="Next day"><span class="ico" data-icon="chevR"></span></button>
+        <button class="round" id="calendarBtn" type="button" title="Pick a date" aria-label="Pick a date"><span class="ico" data-icon="calendar"></span></button>
+      </div>
+    </header>
+
+    <div class="banners">
+      <div class="banner error" id="saveBanner" hidden role="alert"></div>
+      <div class="banner" id="viewBanner" hidden></div>
+      <div class="banner" id="carryBanner" hidden></div>
+    </div>
+
+    <section class="stats" data-panel="stats" aria-label="Summary">
+      <div class="stat">
+        <span class="stat-icon"><span class="ico" data-icon="thumb"></span></span>
+        <div><div class="stat-label">Finished</div>
+          <div class="stat-value"><strong id="statDone">0</strong><span class="delta" id="statDoneDelta"></span></div></div>
+      </div>
+      <div class="stat">
+        <span class="stat-icon"><span class="ico" data-icon="timer"></span></span>
+        <div><div class="stat-label">Tracked</div>
+          <div class="stat-value"><strong id="statTracked">0m</strong><span class="delta" id="statTrackedDelta"></span></div></div>
+      </div>
+      <div class="stat">
+        <span class="stat-icon"><span class="ico" data-icon="trend"></span></span>
+        <div><div class="stat-label">This week</div>
+          <div class="stat-value"><strong id="statWeek">0m</strong><span class="delta" id="statWeekDelta"></span></div></div>
+      </div>
+      <div class="stat">
+        <span class="stat-icon"><span class="ico" data-icon="trophy"></span></span>
+        <div><div class="stat-label">Wins</div>
+          <div class="stat-value"><strong id="statWins">0</strong><span class="delta" id="statWinsDelta"></span></div></div>
+      </div>
+    </section>
+
+    <section data-panel="chart" aria-labelledby="h-chart">
+      <div class="section-head">
+        <h2 id="h-chart">Hours</h2>
+        <div class="row">
+          <div class="chart-legend" id="chartLegend"></div>
+          <label class="visually-hidden" for="chartWeek">Week to show</label>
+          <select class="pill-select" id="chartWeek">
+            <option value="0">This week</option>
+            <option value="1">Last week</option>
+            <option value="2">2 weeks ago</option>
+            <option value="3">3 weeks ago</option>
+          </select>
+        </div>
+      </div>
+      <div class="chart-wrap" id="chartWrap"></div>
+    </section>
+
+    <section data-panel="todos" aria-labelledby="h-todos">
+      <div class="section-head">
+        <div class="title-row"><h2 id="h-todos">Objectives</h2><span class="sep"></span><strong id="todoSub">Done 0%</strong></div>
+      </div>
+      <div role="group" class="task-form" id="todoForm">
+        <input type="text" id="todoInput" placeholder="Add an objective and press Enter" aria-label="New objective">
+        <label class="check-row small" title="Mark as high priority"><input type="checkbox" id="todoHigh"> High priority</label>
+        <button class="btn primary" type="button" data-submit>Add</button>
+      </div>
+      <div id="todoList"></div>
+    </section>
+
+    <div class="cards">
+      <section class="card" data-panel="wins" aria-labelledby="h-wins">
+        <div class="card-head"><h2 id="h-wins"><span class="ico" data-icon="trophy"></span>Wins Log</h2><span class="card-sub" id="winCounts"></span></div>
+        <div role="group" class="row" id="winForm">
+          <input type="text" class="grow" id="winInput" placeholder="What did you accomplish?" aria-label="New win">
+          <label class="visually-hidden" for="winCat">Category</label>
+          <select id="winCat"></select>
+          <button class="btn primary" type="button" data-submit>Add</button>
+        </div>
+        <div id="winList"></div>
+      </section>
+
+      <section class="card" data-panel="notes" aria-labelledby="h-notes">
+        <div class="card-head"><h2 id="h-notes"><span class="ico" data-icon="pencil"></span>Daily Notes</h2><span class="card-sub" id="notesSub"></span></div>
+        <label class="visually-hidden" for="dailyNotes">Notes for this day</label>
+        <textarea id="dailyNotes" placeholder="Decisions, things you learned, questions for your 1:1..." style="min-height:9rem"></textarea>
+      </section>
+
+      <section class="card" data-panel="quote" aria-labelledby="h-quote">
+        <div class="card-head"><h2 id="h-quote"><span class="ico" data-icon="spark"></span>Quote of the Day</h2></div>
+        <div class="quote-mark" aria-hidden="true">“</div>
+        <p class="quote-text" id="quoteText"></p>
+        <div class="quote-author" id="quoteAuthor"></div>
+      </section>
+
+      <section class="card" data-panel="verse" aria-labelledby="h-verse">
+        <div class="card-head"><h2 id="h-verse"><span class="ico" data-icon="book"></span>Verse of the Day</h2><span class="chip">KJV</span></div>
+        <p class="verse-text" id="verseText"></p>
+        <div class="verse-ref" id="verseRef"></div>
+      </section>
+
+      <section class="card" data-panel="links" aria-labelledby="h-links">
+        <div class="card-head"><h2 id="h-links"><span class="ico" data-icon="link"></span>Links</h2><button class="btn-link" id="editLinksBtn" type="button">Edit</button></div>
+        <div id="linksBody"></div>
+        <div class="subsection">
+          <h3>GitLab quick open</h3>
+          <div role="group" class="row" id="gitlabForm">
+            <label class="visually-hidden" for="glKind">Type</label>
+            <select id="glKind"><option value="issue">Issue</option><option value="mr">Merge request</option></select>
+            <input type="text" class="grow" id="glNumber" placeholder="123, #123 or !45" aria-label="Issue or merge request number">
+            <button class="btn primary" type="button" data-submit>Open</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" data-panel="countdowns" aria-labelledby="h-countdowns">
+        <div class="card-head"><h2 id="h-countdowns"><span class="ico" data-icon="hourglass"></span>Countdowns</h2><button class="btn-link" id="editCountdownsBtn" type="button">Edit</button></div>
+        <div id="countdownsBody"></div>
+      </section>
+
+      <section class="card" data-panel="focus" aria-labelledby="h-focus">
+        <div class="card-head"><h2 id="h-focus"><span class="ico" data-icon="target"></span>Focus Timer</h2><span class="card-sub" id="focusCount"></span></div>
+        <div class="focus-mode" id="focusMode">Focus</div>
+        <div class="focus-time" id="focusTime">25:00</div>
+        <div class="row" style="justify-content:center">
+          <button class="btn primary" id="focusStartBtn" type="button">Start</button>
+          <button class="btn" id="focusResetBtn" type="button">Reset</button>
+          <button class="btn" id="focusSwitchBtn" type="button">Switch to break</button>
+        </div>
+        <div style="text-align:center"><button class="btn-link" id="focusNotifyBtn" type="button" hidden>Enable desktop notifications</button></div>
+      </section>
+
+      <section class="card" data-panel="snippets" aria-labelledby="h-snippets">
+        <div class="card-head"><h2 id="h-snippets"><span class="ico" data-icon="copy"></span>Snippets</h2><button class="btn-link" id="editSnippetsBtn" type="button">Edit</button></div>
+        <div id="snippetsBody"></div>
+      </section>
+
+      <section class="card wide" data-panel="sticky" aria-labelledby="h-sticky">
+        <div class="card-head"><h2 id="h-sticky"><span class="ico" data-icon="pin"></span>Sticky Notes</h2><button class="btn small soft" id="addStickyBtn" type="button">+ New note</button></div>
+        <div id="stickyBody"></div>
+      </section>
+    </div>
+  </main>
+
+  <!-- ============================ RIGHT COLUMN ============================ -->
+  <aside class="aside" aria-label="Time clock and meetings">
+    <section class="clock-card" data-panel="clock" aria-label="Time clock" id="clockBody"></section>
+
+    <section data-panel="meetings" aria-labelledby="h-meetings" style="display:grid;gap:22px">
+      <h2 class="divider-label" id="h-meetings">Meetings</h2>
+      <div class="divider-tools"><span id="meetingsSub"></span>·<button class="btn-link" id="editMeetingsBtn" type="button">Edit recurring</button></div>
+      <div id="meetingsList"></div>
+      <details class="oneoff" id="oneOffDetails">
+        <summary>+ Add a one-off meeting for this day</summary>
+        <div role="group" class="oneoff-form" id="oneOffForm">
+          <input type="text" id="ooTitle" placeholder="Meeting title" aria-label="Meeting title">
+          <div class="row">
+            <label class="field"><span>Start</span><input type="time" id="ooStart"></label>
+            <label class="field"><span>End</span><input type="time" id="ooEnd"></label>
+          </div>
+          <input type="text" id="ooLink" placeholder="Link (optional, e.g. Teams link)" aria-label="Meeting link">
+          <div><button class="btn primary" type="button" data-submit>Add meeting</button></div>
+        </div>
+      </details>
+    </section>
+  </aside>
+</div>
+
+<!-- ============================ DIALOGS ============================ -->
+<dialog id="settingsDialog" aria-labelledby="settingsTitle">
+  <div class="dlg-head"><h2 id="settingsTitle">Settings</h2><button class="btn" type="button" data-close>Done</button></div>
+  <div class="dlg-body" id="settingsBody"></div>
+</dialog>
+
+<dialog id="historyDialog" aria-labelledby="historyTitle">
+  <div class="dlg-head"><h2 id="historyTitle">History</h2><button class="btn" type="button" data-close>Close</button></div>
+  <div class="dlg-body" id="historyBody"></div>
+</dialog>
+
+<dialog id="searchDialog" aria-labelledby="searchTitle">
+  <div class="dlg-head"><h2 id="searchTitle">Search everything</h2><button class="btn" type="button" data-close>Close</button></div>
+  <div class="dlg-body">
+    <input type="search" id="searchInput" placeholder="Type at least 2 characters..." aria-label="Search">
+    <div id="searchResults"></div>
+  </div>
+</dialog>
+
+<dialog id="reportDialog" aria-labelledby="reportTitle">
+  <div class="dlg-head"><h2 id="reportTitle">Report for 1:1s</h2><button class="btn" type="button" data-close>Close</button></div>
+  <div class="dlg-body">
+    <div class="row">
+      <label class="field"><span>Range</span>
+        <select id="reportPreset">
+          <option value="thisMonth">This month</option>
+          <option value="lastMonth">Last month</option>
+          <option value="thisQuarter">This quarter</option>
+          <option value="lastQuarter">Last quarter</option>
+          <option value="custom">Custom</option>
+        </select></label>
+      <label class="field"><span>From</span><input type="date" id="reportFrom"></label>
+      <label class="field"><span>To</span><input type="date" id="reportTo"></label>
+    </div>
+    <label class="check-row"><input type="checkbox" id="reportNotes"> Include daily notes</label>
+    <div class="row">
+      <button class="btn primary" id="reportGenerate" type="button">Generate</button>
+      <button class="btn" id="reportCopyText" type="button" disabled>Copy as plain text</button>
+      <button class="btn" id="reportCopyMd" type="button" disabled>Copy as Markdown</button>
+      <button class="btn" id="reportPrint" type="button" disabled>Print</button>
+    </div>
+    <div id="reportPreview"></div>
+  </div>
+</dialog>
+
+<!-- In-page "Are you sure?" box (used instead of the browser's confirm popup, which Chrome can block) -->
+<dialog id="confirmDialog" class="small-dlg" aria-labelledby="confirmMsg">
+  <div class="dlg-body">
+    <p id="confirmMsg" style="font-size:1.02rem"></p>
+    <div class="row" style="justify-content:flex-end">
+      <button class="btn" id="confirmCancel" type="button">Cancel</button>
+      <button class="btn primary" id="confirmOk" type="button">Delete</button>
+    </div>
+  </div>
+</dialog>
+
+<input type="file" id="importFile" accept=".json,application/json" hidden>
+<div id="toast" role="status" aria-live="polite"></div>
+<div id="printArea"></div>
+
+<!-- =====================================================================
+     DATA: QUOTES and KJV VERSES
+     Add more by copying a line. Format: ["text", "author"] / ["text", "reference"]
+     ===================================================================== -->
+<script>
+const QUOTES = [
+  ["Well done is better than well said.", "Benjamin Franklin"],
+  ["Lost time is never found again.", "Benjamin Franklin"],
+  ["Diligence is the mother of good luck.", "Benjamin Franklin"],
+  ["Little strokes fell great oaks.", "Benjamin Franklin"],
+  ["Far and away the best prize that life offers is the chance to work hard at work worth doing.", "Theodore Roosevelt"],
+  ["Do what you can, with what you have, where you are.", "Theodore Roosevelt (quoting Squire Bill Widener)"],
+  ["We are what we repeatedly do. Excellence, then, is not an act, but a habit.", "Will Durant"],
+  ["Knowing is not enough; we must apply. Willing is not enough; we must do.", "Johann Wolfgang von Goethe"],
+  ["Things which matter most must never be at the mercy of things which matter least.", "Johann Wolfgang von Goethe"],
+  ["The best way out is always through.", "Robert Frost"],
+  ["Life is like riding a bicycle. To keep your balance you must keep moving.", "Albert Einstein"],
+  ["Perfection is achieved, not when there is nothing more to add, but when there is nothing left to take away.", "Antoine de Saint-Exupéry"],
+  ["First, solve the problem. Then, write the code.", "John Johnson"],
+  ["Programs must be written for people to read, and only incidentally for machines to execute.", "Harold Abelson"],
+  ["Any fool can write code that a computer can understand. Good programmers write code that humans can understand.", "Martin Fowler"],
+  ["Make it work, make it right, make it fast.", "Kent Beck"],
+  ["Optimism is an occupational hazard of programming: feedback is the treatment.", "Kent Beck"],
+  ["Simplicity is prerequisite for reliability.", "Edsger W. Dijkstra"],
+  ["The most dangerous phrase in the language is, 'We've always done it this way.'", "Grace Hopper"],
+  ["A ship in harbor is safe, but that is not what ships are built for.", "John A. Shedd"],
+  ["Talk is cheap. Show me the code.", "Linus Torvalds"],
+  ["The best way to predict the future is to invent it.", "Alan Kay"],
+  ["Clean code always looks like it was written by someone who cares.", "Michael Feathers"],
+  ["Code is like humor. When you have to explain it, it's bad.", "Cory House"],
+  ["Before software can be reusable it first has to be usable.", "Ralph Johnson"],
+  ["The best error message is the one that never shows up.", "Thomas Fuchs"],
+  ["Fix the cause, not the symptom.", "Steve Maguire"],
+  ["Walking on water and developing software from a specification are easy if both are frozen.", "Edward V. Berard"],
+  ["Courage is grace under pressure.", "Ernest Hemingway"],
+  ["You miss 100% of the shots you don't take.", "Wayne Gretzky"],
+  ["It's not whether you get knocked down; it's whether you get up.", "Vince Lombardi"],
+  ["Do not let what you cannot do interfere with what you can do.", "John Wooden"],
+  ["Be quick, but don't hurry.", "John Wooden"],
+  ["Make each day your masterpiece.", "John Wooden"],
+  ["Failure is not fatal, but failure to change might be.", "John Wooden"],
+  ["Hard work beats talent when talent doesn't work hard.", "Tim Notke"],
+  ["Nothing is particularly hard if you divide it into small jobs.", "Henry Ford"],
+  ["Genius is one percent inspiration and ninety-nine percent perspiration.", "Thomas Edison"],
+  ["Plans are worthless, but planning is everything.", "Dwight D. Eisenhower"],
+  ["To improve is to change; to be perfect is to change often.", "Winston Churchill"],
+  ["You can't use up creativity. The more you use, the more you have.", "Maya Angelou"],
+  ["Nothing will work unless you do.", "Maya Angelou"],
+  ["If you don't like something, change it. If you can't change it, change your attitude.", "Maya Angelou"],
+  ["Do the best you can until you know better. Then when you know better, do better.", "Maya Angelou"],
+  ["The most effective way to do it, is to do it.", "Amelia Earhart"],
+  ["Act as if what you do makes a difference. It does.", "William James"],
+  ["Nothing is so fatiguing as the eternal hanging on of an uncompleted task.", "William James"],
+  ["If you can't fly then run, if you can't run then walk, if you can't walk then crawl, but whatever you do you have to keep moving forward.", "Martin Luther King Jr."],
+  ["The time is always right to do what is right.", "Martin Luther King Jr."],
+  ["Everybody can be great, because everybody can serve.", "Martin Luther King Jr."],
+  ["Expect great things from God; attempt great things for God.", "William Carey"],
+  ["Go put your creed into your deed.", "Ralph Waldo Emerson"],
+  ["Nothing great was ever achieved without enthusiasm.", "Ralph Waldo Emerson"],
+  ["Write it on your heart that every day is the best day in the year.", "Ralph Waldo Emerson"],
+  ["It's not enough to be busy; so are the ants. The question is: What are we busy about?", "Henry David Thoreau"],
+  ["Success is the sum of small efforts, repeated day in and day out.", "Robert Collier"],
+  ["The secret of your future is hidden in your daily routine.", "Mike Murdock"],
+  ["You don't have to be great to start, but you have to start to be great.", "Zig Ziglar"],
+  ["People often say that motivation doesn't last. Well, neither does bathing. That's why we recommend it daily.", "Zig Ziglar"],
+  ["Motivation is what gets you started. Habit is what keeps you going.", "Jim Ryun"],
+  ["Don't watch the clock; do what it does. Keep going.", "Sam Levenson"],
+  ["Alone we can do so little; together we can do so much.", "Helen Keller"],
+  ["Optimism is the faith that leads to achievement.", "Helen Keller"],
+  ["Start where you are. Use what you have. Do what you can.", "Arthur Ashe"],
+  ["Success is a journey, not a destination. The doing is often more important than the outcome.", "Arthur Ashe"],
+  ["Champions keep playing until they get it right.", "Billie Jean King"],
+  ["The difference between ordinary and extraordinary is that little extra.", "Jimmy Johnson"],
+  ["Excellence is not a skill. It is an attitude.", "Ralph Marston"],
+  ["What you do today can improve all your tomorrows.", "Ralph Marston"],
+  ["The only way to do great work is to love what you do.", "Steve Jobs"],
+  ["Real artists ship.", "Steve Jobs"],
+  ["If everything seems under control, you're not going fast enough.", "Mario Andretti"],
+  ["Don't count the days, make the days count.", "Muhammad Ali"],
+  ["He who is not courageous enough to take risks will accomplish nothing in life.", "Muhammad Ali"],
+  ["It's hard to beat a person who never gives up.", "Babe Ruth"],
+  ["With the new day comes new strength and new thoughts.", "Eleanor Roosevelt"],
+  ["You must do the thing you think you cannot do.", "Eleanor Roosevelt"],
+  ["Ever tried. Ever failed. No matter. Try again. Fail again. Fail better.", "Samuel Beckett"],
+  ["A journey of a thousand miles begins with a single step.", "Lao Tzu"],
+  ["Well begun is half done.", "Aristotle"],
+  ["We must all suffer one of two things: the pain of discipline or the pain of regret.", "Jim Rohn"],
+  ["Discipline is the bridge between goals and accomplishment.", "Jim Rohn"],
+  ["Either you run the day or the day runs you.", "Jim Rohn"],
+  ["Some people dream of success, while other people get up every morning and make it happen.", "Wayne Huizenga"],
+  ["Small deeds done are better than great deeds planned.", "Peter Marshall"],
+  ["Do your little bit of good where you are; it's those little bits of good put together that overwhelm the world.", "Desmond Tutu"],
+  ["Courage doesn't always roar. Sometimes courage is the quiet voice at the end of the day saying, 'I will try again tomorrow.'", "Mary Anne Radmacher"],
+  ["Perseverance is not a long race; it is many short races one after the other.", "Walter Elliot"],
+  ["Great things are done by a series of small things brought together.", "Vincent van Gogh"],
+  ["I am always doing that which I cannot do, in order that I may learn how to do it.", "Pablo Picasso"],
+  ["Inspiration exists, but it has to find you working.", "Pablo Picasso"],
+  ["The best preparation for tomorrow is doing your best today.", "H. Jackson Brown Jr."],
+  ["Opportunities don't happen. You create them.", "Chris Grosser"],
+  ["To be prepared is half the victory.", "Miguel de Cervantes"],
+  ["Aim at heaven and you will get earth thrown in. Aim at earth and you get neither.", "C. S. Lewis"],
+  ["Faith is the bird that feels the light when the dawn is still dark.", "Rabindranath Tagore"],
+  ["Experience is the name everyone gives to their mistakes.", "Oscar Wilde"],
+  ["Tough times never last, but tough people do.", "Robert H. Schuller"],
+  ["Every day may not be good, but there is something good in every day.", "Alice Morse Earle"],
+  ["Be so good they can't ignore you.", "Steve Martin"],
+  ["Productivity is never an accident. It is always the result of a commitment to excellence, intelligent planning, and focused effort.", "Paul J. Meyer"],
+  ["Focus on being productive instead of busy.", "Tim Ferriss"],
+  ["Amateurs sit and wait for inspiration, the rest of us just get up and go to work.", "Stephen King"],
+  ["The key is not to prioritize what's on your schedule, but to schedule your priorities.", "Stephen R. Covey"],
+  ["Begin with the end in mind.", "Stephen R. Covey"],
+  ["Until we can manage time, we can manage nothing else.", "Peter Drucker"],
+  ["There is nothing so useless as doing efficiently that which should not be done at all.", "Peter Drucker"],
+  ["Talent wins games, but teamwork and intelligence win championships.", "Michael Jordan"],
+  ["Some people want it to happen, some wish it would happen, others make it happen.", "Michael Jordan"],
+  ["If you want to lift yourself up, lift up someone else.", "Booker T. Washington"],
+  ["Success is to be measured not so much by the position that one has reached in life as by the obstacles which he has overcome.", "Booker T. Washington"],
+  ["Character is like a tree and reputation like its shadow. The shadow is what we think of it; the tree is the real thing.", "Abraham Lincoln"],
+  ["The best way to cheer yourself up is to try to cheer somebody else up.", "Mark Twain"],
+  ["Out of difficulties grow miracles.", "Jean de La Bruyère"],
+  ["Patience and diligence, like faith, remove mountains.", "William Penn"],
+  ["Work hard, be kind, and amazing things will happen.", "Conan O'Brien"],
+  ["All we have to decide is what to do with the time that is given us.", "J. R. R. Tolkien"],
+  ["Change your thoughts and you change your world.", "Norman Vincent Peale"],
+  ["Do not be embarrassed by your failures, learn from them and start again.", "Richard Branson"],
+  ["You will never win if you never begin.", "Helen Rowland"],
+  ["Setting goals is the first step in turning the invisible into the visible.", "Tony Robbins"],
+  ["Determine never to be idle.", "Thomas Jefferson"]
+];
+
+const VERSES = [
+  ["For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life.", "John 3:16"],
+  ["Trust in the LORD with all thine heart; and lean not unto thine own understanding. In all thy ways acknowledge him, and he shall direct thy paths.", "Proverbs 3:5-6"],
+  ["I can do all things through Christ which strengtheneth me.", "Philippians 4:13"],
+  ["For I know the thoughts that I think toward you, saith the LORD, thoughts of peace, and not of evil, to give you an expected end.", "Jeremiah 29:11"],
+  ["But they that wait upon the LORD shall renew their strength; they shall mount up with wings as eagles; they shall run, and not be weary; and they shall walk, and not faint.", "Isaiah 40:31"],
+  ["Have not I commanded thee? Be strong and of a good courage; be not afraid, neither be thou dismayed: for the LORD thy God is with thee whithersoever thou goest.", "Joshua 1:9"],
+  ["The LORD is my shepherd; I shall not want.", "Psalm 23:1"],
+  ["Yea, though I walk through the valley of the shadow of death, I will fear no evil: for thou art with me; thy rod and thy staff they comfort me.", "Psalm 23:4"],
+  ["And we know that all things work together for good to them that love God, to them who are the called according to his purpose.", "Romans 8:28"],
+  ["And whatsoever ye do, do it heartily, as to the Lord, and not unto men;", "Colossians 3:23"],
+  ["But seek ye first the kingdom of God, and his righteousness; and all these things shall be added unto you.", "Matthew 6:33"],
+  ["Take therefore no thought for the morrow: for the morrow shall take thought for the things of itself. Sufficient unto the day is the evil thereof.", "Matthew 6:34"],
+  ["This is the day which the LORD hath made; we will rejoice and be glad in it.", "Psalm 118:24"],
+  ["It is of the LORD'S mercies that we are not consumed, because his compassions fail not. They are new every morning: great is thy faithfulness.", "Lamentations 3:22-23"],
+  ["Be careful for nothing; but in every thing by prayer and supplication with thanksgiving let your requests be made known unto God. And the peace of God, which passeth all understanding, shall keep your hearts and minds through Christ Jesus.", "Philippians 4:6-7"],
+  ["God is our refuge and strength, a very present help in trouble.", "Psalm 46:1"],
+  ["Be still, and know that I am God: I will be exalted among the heathen, I will be exalted in the earth.", "Psalm 46:10"],
+  ["Fear thou not; for I am with thee: be not dismayed; for I am thy God: I will strengthen thee; yea, I will help thee; yea, I will uphold thee with the right hand of my righteousness.", "Isaiah 41:10"],
+  ["For God hath not given us the spirit of fear; but of power, and of love, and of a sound mind.", "2 Timothy 1:7"],
+  ["Commit thy works unto the LORD, and thy thoughts shall be established.", "Proverbs 16:3"],
+  ["A man's heart deviseth his way: but the LORD directeth his steps.", "Proverbs 16:9"],
+  ["And let us not be weary in well doing: for in due season we shall reap, if we faint not.", "Galatians 6:9"],
+  ["Come unto me, all ye that labour and are heavy laden, and I will give you rest.", "Matthew 11:28"],
+  ["Take my yoke upon you, and learn of me; for I am meek and lowly in heart: and ye shall find rest unto your souls. For my yoke is easy, and my burden is light.", "Matthew 11:29-30"],
+  ["Casting all your care upon him; for he careth for you.", "1 Peter 5:7"],
+  ["Delight thyself also in the LORD; and he shall give thee the desires of thine heart.", "Psalm 37:4"],
+  ["Commit thy way unto the LORD; trust also in him; and he shall bring it to pass.", "Psalm 37:5"],
+  ["Rest in the LORD, and wait patiently for him: fret not thyself because of him who prospereth in his way, because of the man who bringeth wicked devices to pass.", "Psalm 37:7"],
+  ["The steps of a good man are ordered by the LORD: and he delighteth in his way.", "Psalm 37:23"],
+  ["And be not conformed to this world: but be ye transformed by the renewing of your mind, that ye may prove what is that good, and acceptable, and perfect, will of God.", "Romans 12:2"],
+  ["Be kindly affectioned one to another with brotherly love; in honour preferring one another;", "Romans 12:10"],
+  ["Not slothful in business; fervent in spirit; serving the Lord;", "Romans 12:11"],
+  ["Rejoicing in hope; patient in tribulation; continuing instant in prayer;", "Romans 12:12"],
+  ["Whether therefore ye eat, or drink, or whatsoever ye do, do all to the glory of God.", "1 Corinthians 10:31"],
+  ["Therefore, my beloved brethren, be ye stedfast, unmoveable, always abounding in the work of the Lord, forasmuch as ye know that your labour is not in vain in the Lord.", "1 Corinthians 15:58"],
+  ["Let all your things be done with charity.", "1 Corinthians 16:14"],
+  ["Charity suffereth long, and is kind; charity envieth not; charity vaunteth not itself, is not puffed up,", "1 Corinthians 13:4"],
+  ["And now abideth faith, hope, charity, these three; but the greatest of these is charity.", "1 Corinthians 13:13"],
+  ["Let all things be done decently and in order.", "1 Corinthians 14:40"],
+  ["(For we walk by faith, not by sight:)", "2 Corinthians 5:7"],
+  ["Therefore if any man be in Christ, he is a new creature: old things are passed away; behold, all things are become new.", "2 Corinthians 5:17"],
+  ["For which cause we faint not; but though our outward man perish, yet the inward man is renewed day by day.", "2 Corinthians 4:16"],
+  ["And he said unto me, My grace is sufficient for thee: for my strength is made perfect in weakness. Most gladly therefore will I rather glory in my infirmities, that the power of Christ may rest upon me.", "2 Corinthians 12:9"],
+  ["Every man according as he purposeth in his heart, so let him give; not grudgingly, or of necessity: for God loveth a cheerful giver.", "2 Corinthians 9:7"],
+  ["For by grace are ye saved through faith; and that not of yourselves: it is the gift of God: Not of works, lest any man should boast.", "Ephesians 2:8-9"],
+  ["For we are his workmanship, created in Christ Jesus unto good works, which God hath before ordained that we should walk in them.", "Ephesians 2:10"],
+  ["Now unto him that is able to do exceeding abundantly above all that we ask or think, according to the power that worketh in us,", "Ephesians 3:20"],
+  ["And be ye kind one to another, tenderhearted, forgiving one another, even as God for Christ's sake hath forgiven you.", "Ephesians 4:32"],
+  ["Let no corrupt communication proceed out of your mouth, but that which is good to the use of edifying, that it may minister grace unto the hearers.", "Ephesians 4:29"],
+  ["Redeeming the time, because the days are evil.", "Ephesians 5:16"],
+  ["Finally, my brethren, be strong in the Lord, and in the power of his might.", "Ephesians 6:10"],
+  ["Being confident of this very thing, that he which hath begun a good work in you will perform it until the day of Jesus Christ:", "Philippians 1:6"],
+  ["Brethren, I count not myself to have apprehended: but this one thing I do, forgetting those things which are behind, and reaching forth unto those things which are before, I press toward the mark for the prize of the high calling of God in Christ Jesus.", "Philippians 3:13-14"],
+  ["Finally, brethren, whatsoever things are true, whatsoever things are honest, whatsoever things are just, whatsoever things are pure, whatsoever things are lovely, whatsoever things are of good report; if there be any virtue, and if there be any praise, think on these things.", "Philippians 4:8"],
+  ["But my God shall supply all your need according to his riches in glory by Christ Jesus.", "Philippians 4:19"],
+  ["Set your affection on things above, not on things on the earth.", "Colossians 3:2"],
+  ["And let the peace of God rule in your hearts, to the which also ye are called in one body; and be ye thankful.", "Colossians 3:15"],
+  ["And whatsoever ye do in word or deed, do all in the name of the Lord Jesus, giving thanks to God and the Father by him.", "Colossians 3:17"],
+  ["Let your speech be alway with grace, seasoned with salt, that ye may know how ye ought to answer every man.", "Colossians 4:6"],
+  ["Wherefore comfort yourselves together, and edify one another, even as also ye do.", "1 Thessalonians 5:11"],
+  ["Rejoice evermore. Pray without ceasing. In every thing give thanks: for this is the will of God in Christ Jesus concerning you.", "1 Thessalonians 5:16-18"],
+  ["But ye, brethren, be not weary in well doing.", "2 Thessalonians 3:13"],
+  ["Let no man despise thy youth; but be thou an example of the believers, in word, in conversation, in charity, in spirit, in faith, in purity.", "1 Timothy 4:12"],
+  ["Study to shew thyself approved unto God, a workman that needeth not to be ashamed, rightly dividing the word of truth.", "2 Timothy 2:15"],
+  ["I have fought a good fight, I have finished my course, I have kept the faith:", "2 Timothy 4:7"],
+  ["Let us therefore come boldly unto the throne of grace, that we may obtain mercy, and find grace to help in time of need.", "Hebrews 4:16"],
+  ["Let us hold fast the profession of our faith without wavering; (for he is faithful that promised;)", "Hebrews 10:23"],
+  ["And let us consider one another to provoke unto love and to good works:", "Hebrews 10:24"],
+  ["Now faith is the substance of things hoped for, the evidence of things not seen.", "Hebrews 11:1"],
+  ["But without faith it is impossible to please him: for he that cometh to God must believe that he is, and that he is a rewarder of them that diligently seek him.", "Hebrews 11:6"],
+  ["Wherefore seeing we also are compassed about with so great a cloud of witnesses, let us lay aside every weight, and the sin which doth so easily beset us, and let us run with patience the race that is set before us,", "Hebrews 12:1"],
+  ["Let your conversation be without covetousness; and be content with such things as ye have: for he hath said, I will never leave thee, nor forsake thee.", "Hebrews 13:5"],
+  ["Jesus Christ the same yesterday, and to day, and for ever.", "Hebrews 13:8"],
+  ["My brethren, count it all joy when ye fall into divers temptations; Knowing this, that the trying of your faith worketh patience.", "James 1:2-3"],
+  ["If any of you lack wisdom, let him ask of God, that giveth to all men liberally, and upbraideth not; and it shall be given him.", "James 1:5"],
+  ["Blessed is the man that endureth temptation: for when he is tried, he shall receive the crown of life, which the Lord hath promised to them that love him.", "James 1:12"],
+  ["Every good gift and every perfect gift is from above, and cometh down from the Father of lights, with whom is no variableness, neither shadow of turning.", "James 1:17"],
+  ["Wherefore, my beloved brethren, let every man be swift to hear, slow to speak, slow to wrath:", "James 1:19"],
+  ["But be ye doers of the word, and not hearers only, deceiving your own selves.", "James 1:22"],
+  ["Humble yourselves in the sight of the Lord, and he shall lift you up.", "James 4:10"],
+  ["As every man hath received the gift, even so minister the same one to another, as good stewards of the manifold grace of God.", "1 Peter 4:10"],
+  ["But grow in grace, and in the knowledge of our Lord and Saviour Jesus Christ. To him be glory both now and for ever. Amen.", "2 Peter 3:18"],
+  ["If we confess our sins, he is faithful and just to forgive us our sins, and to cleanse us from all unrighteousness.", "1 John 1:9"],
+  ["My little children, let us not love in word, neither in tongue; but in deed and in truth.", "1 John 3:18"],
+  ["Beloved, let us love one another: for love is of God; and every one that loveth is born of God, and knoweth God.", "1 John 4:7"],
+  ["There is no fear in love; but perfect love casteth out fear: because fear hath torment. He that feareth is not made perfect in love.", "1 John 4:18"],
+  ["We love him, because he first loved us.", "1 John 4:19"],
+  ["And this is the confidence that we have in him, that, if we ask any thing according to his will, he heareth us:", "1 John 5:14"],
+  ["And God shall wipe away all tears from their eyes; and there shall be no more death, neither sorrow, nor crying, neither shall there be any more pain: for the former things are passed away.", "Revelation 21:4"],
+  ["In the beginning God created the heaven and the earth.", "Genesis 1:1"],
+  ["And, behold, I am with thee, and will keep thee in all places whither thou goest, and will bring thee again into this land; for I will not leave thee, until I have done that which I have spoken to thee of.", "Genesis 28:15"],
+  ["The LORD shall fight for you, and ye shall hold your peace.", "Exodus 14:14"],
+  ["The LORD bless thee, and keep thee: The LORD make his face shine upon thee, and be gracious unto thee: The LORD lift up his countenance upon thee, and give thee peace.", "Numbers 6:24-26"],
+  ["Be strong and of a good courage, fear not, nor be afraid of them: for the LORD thy God, he it is that doth go with thee; he will not fail thee, nor forsake thee.", "Deuteronomy 31:6"],
+  ["And the LORD, he it is that doth go before thee; he will be with thee, he will not fail thee, neither forsake thee: fear not, neither be dismayed.", "Deuteronomy 31:8"],
+  ["Seek the LORD and his strength, seek his face continually.", "1 Chronicles 16:11"],
+  ["Be ye strong therefore, and let not your hands be weak: for your work shall be rewarded.", "2 Chronicles 15:7"],
+  ["I will both lay me down in peace, and sleep: for thou, LORD, only makest me dwell in safety.", "Psalm 4:8"],
+  ["My voice shalt thou hear in the morning, O LORD; in the morning will I direct my prayer unto thee, and will look up.", "Psalm 5:3"],
+  ["I will praise thee, O LORD, with my whole heart; I will shew forth all thy marvellous works.", "Psalm 9:1"],
+  ["I have set the LORD always before me: because he is at my right hand, I shall not be moved.", "Psalm 16:8"],
+  ["Thou wilt shew me the path of life: in thy presence is fulness of joy; at thy right hand there are pleasures for evermore.", "Psalm 16:11"],
+  ["The LORD is my rock, and my fortress, and my deliverer; my God, my strength, in whom I will trust; my buckler, and the horn of my salvation, and my high tower.", "Psalm 18:2"],
+  ["Let the words of my mouth, and the meditation of my heart, be acceptable in thy sight, O LORD, my strength, and my redeemer.", "Psalm 19:14"],
+  ["Grant thee according to thine own heart, and fulfil all thy counsel.", "Psalm 20:4"],
+  ["Shew me thy ways, O LORD; teach me thy paths. Lead me in thy truth, and teach me: for thou art the God of my salvation; on thee do I wait all the day.", "Psalm 25:4-5"],
+  ["The LORD is my light and my salvation; whom shall I fear? the LORD is the strength of my life; of whom shall I be afraid?", "Psalm 27:1"],
+  ["The LORD is my strength and my shield; my heart trusted in him, and I am helped: therefore my heart greatly rejoiceth; and with my song will I praise him.", "Psalm 28:7"],
+  ["For his anger endureth but a moment; in his favour is life: weeping may endure for a night, but joy cometh in the morning.", "Psalm 30:5"],
+  ["Be of good courage, and he shall strengthen your heart, all ye that hope in the LORD.", "Psalm 31:24"],
+  ["I will instruct thee and teach thee in the way which thou shalt go: I will guide thee with mine eye.", "Psalm 32:8"],
+  ["I sought the LORD, and he heard me, and delivered me from all my fears.", "Psalm 34:4"],
+  ["O taste and see that the LORD is good: blessed is the man that trusteth in him.", "Psalm 34:8"],
+  ["The LORD is nigh unto them that are of a broken heart; and saveth such as be of a contrite spirit.", "Psalm 34:18"],
+  ["I waited patiently for the LORD; and he inclined unto me, and heard my cry.", "Psalm 40:1"],
+  ["Create in me a clean heart, O God; and renew a right spirit within me.", "Psalm 51:10"],
+  ["Cast thy burden upon the LORD, and he shall sustain thee: he shall never suffer the righteous to be moved.", "Psalm 55:22"],
+  ["What time I am afraid, I will trust in thee.", "Psalm 56:3"],
+  ["Truly my soul waiteth upon God: from him cometh my salvation.", "Psalm 62:1"],
+  ["My flesh and my heart faileth: but God is the strength of my heart, and my portion for ever.", "Psalm 73:26"],
+  ["For the LORD God is a sun and shield: the LORD will give grace and glory: no good thing will he withhold from them that walk uprightly.", "Psalm 84:11"],
+  ["So teach us to number our days, that we may apply our hearts unto wisdom.", "Psalm 90:12"],
+  ["And let the beauty of the LORD our God be upon us: and establish thou the work of our hands upon us; yea, the work of our hands establish thou it.", "Psalm 90:17"],
+  ["He that dwelleth in the secret place of the most High shall abide under the shadow of the Almighty.", "Psalm 91:1"],
+  ["In the multitude of my thoughts within me thy comforts delight my soul.", "Psalm 94:19"],
+  ["Enter into his gates with thanksgiving, and into his courts with praise: be thankful unto him, and bless his name.", "Psalm 100:4"],
+  ["Bless the LORD, O my soul, and forget not all his benefits:", "Psalm 103:2"],
+  ["O give thanks unto the LORD, for he is good: for his mercy endureth for ever.", "Psalm 107:1"],
+  ["From the rising of the sun unto the going down of the same the LORD'S name is to be praised.", "Psalm 113:3"],
+  ["Thy word is a lamp unto my feet, and a light unto my path.", "Psalm 119:105"],
+  ["I will lift up mine eyes unto the hills, from whence cometh my help. My help cometh from the LORD, which made heaven and earth.", "Psalm 121:1-2"],
+  ["Except the LORD build the house, they labour in vain that build it: except the LORD keep the city, the watchman waketh but in vain.", "Psalm 127:1"],
+  ["Behold, how good and how pleasant it is for brethren to dwell together in unity!", "Psalm 133:1"],
+  ["I will praise thee; for I am fearfully and wonderfully made: marvellous are thy works; and that my soul knoweth right well.", "Psalm 139:14"],
+  ["Cause me to hear thy lovingkindness in the morning; for in thee do I trust: cause me to know the way wherein I should walk; for I lift up my soul unto thee.", "Psalm 143:8"],
+  ["The LORD is nigh unto all them that call upon him, to all that call upon him in truth.", "Psalm 145:18"],
+  ["He healeth the broken in heart, and bindeth up their wounds.", "Psalm 147:3"],
+  ["Let every thing that hath breath praise the LORD. Praise ye the LORD.", "Psalm 150:6"],
+  ["The fear of the LORD is the beginning of knowledge: but fools despise wisdom and instruction.", "Proverbs 1:7"],
+  ["Keep thy heart with all diligence; for out of it are the issues of life.", "Proverbs 4:23"],
+  ["Go to the ant, thou sluggard; consider her ways, and be wise:", "Proverbs 6:6"],
+  ["The fear of the LORD is the beginning of wisdom: and the knowledge of the holy is understanding.", "Proverbs 9:10"],
+  ["He becometh poor that dealeth with a slack hand: but the hand of the diligent maketh rich.", "Proverbs 10:4"],
+  ["When pride cometh, then cometh shame: but with the lowly is wisdom.", "Proverbs 11:2"],
+  ["The liberal soul shall be made fat: and he that watereth shall be watered also himself.", "Proverbs 11:25"],
+  ["The hand of the diligent shall bear rule: but the slothful shall be under tribute.", "Proverbs 12:24"],
+  ["Heaviness in the heart of man maketh it stoop: but a good word maketh it glad.", "Proverbs 12:25"],
+  ["The soul of the sluggard desireth, and hath nothing: but the soul of the diligent shall be made fat.", "Proverbs 13:4"],
+  ["He that walketh with wise men shall be wise: but a companion of fools shall be destroyed.", "Proverbs 13:20"],
+  ["In all labour there is profit: but the talk of the lips tendeth only to penury.", "Proverbs 14:23"],
+  ["A soft answer turneth away wrath: but grievous words stir up anger.", "Proverbs 15:1"],
+  ["Without counsel purposes are disappointed: but in the multitude of counsellors they are established.", "Proverbs 15:22"],
+  ["Pleasant words are as an honeycomb, sweet to the soul, and health to the bones.", "Proverbs 16:24"],
+  ["He that is slow to anger is better than the mighty; and he that ruleth his spirit than he that taketh a city.", "Proverbs 16:32"],
+  ["A friend loveth at all times, and a brother is born for adversity.", "Proverbs 17:17"],
+  ["A merry heart doeth good like a medicine: but a broken spirit drieth the bones.", "Proverbs 17:22"],
+  ["The name of the LORD is a strong tower: the righteous runneth into it, and is safe.", "Proverbs 18:10"],
+  ["There are many devices in a man's heart; nevertheless the counsel of the LORD, that shall stand.", "Proverbs 19:21"],
+  ["The thoughts of the diligent tend only to plenteousness; but of every one that is hasty only to want.", "Proverbs 21:5"],
+  ["Seest thou a man diligent in his business? he shall stand before kings; he shall not stand before mean men.", "Proverbs 22:29"],
+  ["For a just man falleth seven times, and riseth up again: but the wicked shall fall into mischief.", "Proverbs 24:16"],
+  ["A word fitly spoken is like apples of gold in pictures of silver.", "Proverbs 25:11"],
+  ["Boast not thyself of to morrow; for thou knowest not what a day may bring forth.", "Proverbs 27:1"],
+  ["Iron sharpeneth iron; so a man sharpeneth the countenance of his friend.", "Proverbs 27:17"],
+  ["To every thing there is a season, and a time to every purpose under the heaven:", "Ecclesiastes 3:1"],
+  ["Two are better than one; because they have a good reward for their labour.", "Ecclesiastes 4:9"],
+  ["Better is the end of a thing than the beginning thereof: and the patient in spirit is better than the proud in spirit.", "Ecclesiastes 7:8"],
+  ["Whatsoever thy hand findeth to do, do it with thy might; for there is no work, nor device, nor knowledge, nor wisdom, in the grave, whither thou goest.", "Ecclesiastes 9:10"],
+  ["Also I heard the voice of the Lord, saying, Whom shall I send, and who will go for us? Then said I, Here am I; send me.", "Isaiah 6:8"],
+  ["Behold, God is my salvation; I will trust, and not be afraid: for the LORD JEHOVAH is my strength and my song; he also is become my salvation.", "Isaiah 12:2"],
+  ["Thou wilt keep him in perfect peace, whose mind is stayed on thee: because he trusteth in thee.", "Isaiah 26:3"],
+  ["And thine ears shall hear a word behind thee, saying, This is the way, walk ye in it, when ye turn to the right hand, and when ye turn to the left.", "Isaiah 30:21"],
+  ["The grass withereth, the flower fadeth: but the word of our God shall stand for ever.", "Isaiah 40:8"],
+  ["He giveth power to the faint; and to them that have no might he increaseth strength.", "Isaiah 40:29"],
+  ["When thou passest through the waters, I will be with thee; and through the rivers, they shall not overflow thee: when thou walkest through the fire, thou shalt not be burned; neither shall the flame kindle upon thee.", "Isaiah 43:2"],
+  ["Behold, I will do a new thing; now it shall spring forth; shall ye not know it? I will even make a way in the wilderness, and rivers in the desert.", "Isaiah 43:19"],
+  ["For my thoughts are not your thoughts, neither are your ways my ways, saith the LORD.", "Isaiah 55:8"],
+  ["Blessed is the man that trusteth in the LORD, and whose hope the LORD is.", "Jeremiah 17:7"],
+  ["Ah Lord GOD! behold, thou hast made the heaven and the earth by thy great power and stretched out arm, and there is nothing too hard for thee:", "Jeremiah 32:17"],
+  ["Call unto me, and I will answer thee, and shew thee great and mighty things, which thou knowest not.", "Jeremiah 33:3"],
+  ["He hath shewed thee, O man, what is good; and what doth the LORD require of thee, but to do justly, and to love mercy, and to walk humbly with thy God?", "Micah 6:8"],
+  ["The LORD is good, a strong hold in the day of trouble; and he knoweth them that trust in him.", "Nahum 1:7"],
+  ["The LORD thy God in the midst of thee is mighty; he will save, he will rejoice over thee with joy; he will rest in his love, he will joy over thee with singing.", "Zephaniah 3:17"],
+  ["Blessed are the pure in heart: for they shall see God.", "Matthew 5:8"],
+  ["Blessed are the peacemakers: for they shall be called the children of God.", "Matthew 5:9"],
+  ["Ye are the light of the world. A city that is set on an hill cannot be hid.", "Matthew 5:14"],
+  ["Let your light so shine before men, that they may see your good works, and glorify your Father which is in heaven.", "Matthew 5:16"],
+  ["Ask, and it shall be given you; seek, and ye shall find; knock, and it shall be opened unto you:", "Matthew 7:7"],
+  ["Therefore all things whatsoever ye would that men should do to you, do ye even so to them: for this is the law and the prophets.", "Matthew 7:12"],
+  ["But Jesus beheld them, and said unto them, With men this is impossible; but with God all things are possible.", "Matthew 19:26"],
+  ["Teaching them to observe all things whatsoever I have commanded you: and, lo, I am with you alway, even unto the end of the world. Amen.", "Matthew 28:20"],
+  ["Jesus said unto him, If thou canst believe, all things are possible to him that believeth.", "Mark 9:23"],
+  ["For with God nothing shall be impossible.", "Luke 1:37"],
+  ["And as ye would that men should do to you, do ye also to them likewise.", "Luke 6:31"],
+  ["He that is faithful in that which is least is faithful also in much: and he that is unjust in the least is unjust also in much.", "Luke 16:10"],
+  ["And the light shineth in darkness; and the darkness comprehended it not.", "John 1:5"],
+  ["Then spake Jesus again unto them, saying, I am the light of the world: he that followeth me shall not walk in darkness, but shall have the light of life.", "John 8:12"],
+  ["The thief cometh not, but for to steal, and to kill, and to destroy: I am come that they might have life, and that they might have it more abundantly.", "John 10:10"],
+  ["A new commandment I give unto you, That ye love one another; as I have loved you, that ye also love one another.", "John 13:34"],
+  ["Let not your heart be troubled: ye believe in God, believe also in me.", "John 14:1"],
+  ["Jesus saith unto him, I am the way, the truth, and the life: no man cometh unto the Father, but by me.", "John 14:6"],
+  ["Peace I leave with you, my peace I give unto you: not as the world giveth, give I unto you. Let not your heart be troubled, neither let it be afraid.", "John 14:27"],
+  ["I am the vine, ye are the branches: He that abideth in me, and I in him, the same bringeth forth much fruit: for without me ye can do nothing.", "John 15:5"],
+  ["This is my commandment, That ye love one another, as I have loved you.", "John 15:12"],
+  ["These things I have spoken unto you, that in me ye might have peace. In the world ye shall have tribulation: but be of good cheer; I have overcome the world.", "John 16:33"],
+  ["But God commendeth his love toward us, in that, while we were yet sinners, Christ died for us.", "Romans 5:8"],
+  ["What shall we then say to these things? If God be for us, who can be against us?", "Romans 8:31"],
+  ["For I am persuaded, that neither death, nor life, nor angels, nor principalities, nor powers, nor things present, nor things to come, Nor height, nor depth, nor any other creature, shall be able to separate us from the love of God, which is in Christ Jesus our Lord.", "Romans 8:38-39"],
+  ["So then faith cometh by hearing, and hearing by the word of God.", "Romans 10:17"],
+  ["Now the God of hope fill you with all joy and peace in believing, that ye may abound in hope, through the power of the Holy Ghost.", "Romans 15:13"],
+  ["I am crucified with Christ: nevertheless I live; yet not I, but Christ liveth in me: and the life which I now live in the flesh I live by the faith of the Son of God, who loved me, and gave himself for me.", "Galatians 2:20"],
+  ["But the fruit of the Spirit is love, joy, peace, longsuffering, gentleness, goodness, faith, Meekness, temperance: against such there is no law.", "Galatians 5:22-23"],
+  ["Bear ye one another's burdens, and so fulfil the law of Christ.", "Galatians 6:2"]
+];
+</script>
+
+<!-- =====================================================================
+     APPLICATION CODE
+     ===================================================================== -->
+<script>
+'use strict';
+
+/* =====================================================================
+   1. CONSTANTS
+   Lists of themes and panels, plus the storage key.
+   ===================================================================== */
+const STORAGE_KEY = 'workDashboard.v1';
+const SCHEMA_VERSION = 1;
+const BASE_TITLE = 'My Dashboard';
+
+const THEMES = [
+  { id: 'soft-light',    name: 'Soft Light' },
+  { id: 'espresso',      name: 'Espresso (dark brown)' },
+  { id: 'latte',         name: 'Latte (light brown)' },
+  { id: 'blush',         name: 'Blush (light pink)' },
+  { id: 'rosewood',      name: 'Rosewood (dark pink)' },
+  { id: 'mocharose',     name: 'Mocha Rose (brown + pink)' },
+  { id: 'classic-light', name: 'Classic Light' },
+  { id: 'classic-dark',  name: 'Classic Dark' }
+];
+
+const PANELS = [
+  { id: 'stats',      name: 'Summary numbers' },
+  { id: 'chart',      name: 'Hours chart' },
+  { id: 'todos',      name: 'Objectives' },
+  { id: 'clock',      name: 'Time Clock' },
+  { id: 'meetings',   name: 'Meetings' },
+  { id: 'wins',       name: 'Wins Log' },
+  { id: 'notes',      name: 'Daily Notes' },
+  { id: 'quote',      name: 'Quote of the Day' },
+  { id: 'verse',      name: 'Verse of the Day' },
+  { id: 'links',      name: 'Links & GitLab' },
+  { id: 'countdowns', name: 'Countdowns' },
+  { id: 'focus',      name: 'Focus Timer' },
+  { id: 'snippets',   name: 'Snippets' },
+  { id: 'sticky',     name: 'Sticky Notes' }
+];
+
+const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const DAY_NAMES_LONG = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const CLOCK_LABELS = { in: 'Clock in', breakStart: 'Break start', breakEnd: 'Break end', out: 'Clock out' };
+const LEAVE_HOURS = [8, 8.5, 9, 9.5, 10];
+
+/* =====================================================================
+   2. ICONS
+   Simple line icons drawn with SVG. icon('home') returns an element.
+   In the HTML, <span class="ico" data-icon="home"></span> is filled in at start-up.
+   ===================================================================== */
+const ICONS = {
+  logo: '<rect x="2" y="2" width="9" height="9" rx="3.5"/><rect x="13" y="2" width="9" height="9" rx="4.5"/><rect x="2" y="13" width="9" height="9" rx="4.5"/><rect x="13" y="13" width="9" height="9" rx="3.5"/>',
+  home: '<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+  calendar: '<rect x="3" y="4.5" width="18" height="16.5" rx="3.5"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/>',
+  search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+  report: '<path d="M7 3h7l5 5v13H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',
+  settings: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
+  upload: '<path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/>',
+  palette: '<path d="M12 3a9 9 0 1 0 0 18c1 0 1.5-.7 1.5-1.5 0-1.2-1-1.5-1-2.5 0-.8.7-1.5 1.5-1.5H16a5 5 0 0 0 5-5c0-4-4-7.5-9-7.5z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7.5" r="1"/>',
+  thumb: '<path d="M7 10v11H4a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1zM7 10l4-7a2.5 2.5 0 0 1 2.5 2.5V9h5.2a2 2 0 0 1 2 2.3l-1.3 8A2 2 0 0 1 17.4 21H7"/>',
+  timer: '<circle cx="12" cy="13.5" r="7.5"/><path d="M12 9.5v4l2.5 2M9.5 2.5h5"/>',
+  trend: '<rect x="3" y="3" width="18" height="18" rx="5.5"/><path d="m7 15 3.5-3.5 2.5 2.5L17 9"/>',
+  trophy: '<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4"/>',
+  play: '<path d="M8 5.5v13l11-6.5z"/>',
+  coffee: '<path d="M4 9h13v5a6 6 0 0 1-6 6h-1a6 6 0 0 1-6-6zM17 10h1.5a2.5 2.5 0 0 1 0 5H17M8 2.5v3M12 2.5v3"/>',
+  stop: '<rect x="6" y="6" width="12" height="12" rx="2.5"/>',
+  back: '<path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>',
+  chevL: '<path d="m15 18-6-6 6-6"/>',
+  chevR: '<path d="m9 18 6-6-6-6"/>',
+  pencil: '<path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>',
+  x: '<path d="M6 6l12 12M18 6 6 18"/>',
+  check: '<path d="m5 12.5 4.5 4.5L19 7.5"/>',
+  checkCircle: '<circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.8 2.8L16.5 9.5"/>',
+  circle: '<circle cx="12" cy="12" r="9"/>',
+  flag: '<path d="M5 21V4h11l-2 4.5 2 4.5H5"/>',
+  forward: '<path d="M5 12h14m0 0-5-5m5 5-5 5"/>',
+  star: '<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2-5.5-2.9-5.5 2.9 1-6.2L3 9.6l6.2-.9z"/>',
+  up: '<path d="M12 19V5m0 0-6 6m6-6 6 6"/>',
+  down: '<path d="M12 5v14m0 0-6-6m6 6 6-6"/>',
+  link: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+  video: '<rect x="2.5" y="6" width="13" height="12" rx="3"/><path d="m15.5 10 6-3.5v11l-6-3.5"/>',
+  spark: '<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/>',
+  book: '<path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H20v15H5.5A1.5 1.5 0 0 0 4 19.5zM4 19.5A1.5 1.5 0 0 0 5.5 21H20"/>',
+  hourglass: '<path d="M6 3h12M6 21h12M7 3c0 5 5 6 5 9s-5 4-5 9M17 3c0 5-5 6-5 9s5 4 5 9"/>',
+  target: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+  copy: '<rect x="8" y="8" width="13" height="13" rx="3"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/>',
+  pin: '<path d="M9 3h6l-1 6 4 3v2H6v-2l4-3zM12 14v7"/>'
+};
+
+function icon(name) {
+  const span = document.createElement('span');
+  span.className = 'ico';
+  span.setAttribute('aria-hidden', 'true');
+  span.innerHTML = `<svg viewBox="0 0 24 24">${ICONS[name] || ''}</svg>`; // icons are fixed strings above, never user text
+  return span;
+}
+
+/* =====================================================================
+   3. SMALL HELPERS
+   $ finds an element, h() builds elements, fill() replaces contents,
+   plus toast (little message at the bottom) and an in-page confirm box.
+   ===================================================================== */
+const $ = (sel, root = document) => root.querySelector(sel);
+const pad = n => String(n).padStart(2, '0');
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+
+/** Build a DOM element. Example: h('button', { class: 'btn', onclick: fn }, 'Click me') */
+function h(tag, props, ...kids) {
+  const el = document.createElement(tag);
+  if (props) {
+    for (const [k, v] of Object.entries(props)) {
+      if (v == null || v === false) continue;
+      if (k === 'class') el.className = v;
+      else if (k.startsWith('on') && typeof v === 'function') el.addEventListener(k.slice(2), v);
+      else if (['value', 'checked', 'disabled', 'textContent', 'htmlFor', 'open'].includes(k)) el[k] = v;
+      else if (v === true) el.setAttribute(k, '');
+      else el.setAttribute(k, String(v));
+    }
+  }
+  for (const kid of kids.flat(Infinity)) {
+    if (kid == null || kid === false) continue;
+    el.append(kid instanceof Node ? kid : document.createTextNode(String(kid)));
+  }
+  return el;
+}
+
+/** Build an SVG element (for the chart and the clock ring). */
+function svg(tag, attrs, ...kids) {
+  const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (const [k, v] of Object.entries(attrs || {})) if (v != null) el.setAttribute(k, String(v));
+  for (const kid of kids.flat(Infinity)) {
+    if (kid == null || kid === false) continue;
+    el.append(kid instanceof Node ? kid : document.createTextNode(String(kid)));
+  }
+  return el;
+}
+
+/** Replace an element's contents, skipping null/false values. */
+function fill(el, ...kids) {
+  el.replaceChildren(...kids.flat(Infinity).filter(k => k != null && k !== false)
+    .map(k => k instanceof Node ? k : document.createTextNode(String(k))));
+}
+
+/** Run fn when Enter is pressed in one of the group's inputs, or its [data-submit] button is clicked.
+    (We avoid real <form> submits because sandboxed previews block them.) */
+function onSubmit(sel, fn) {
+  const box = $(sel);
+  box.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && e.target.matches('input:not([type=checkbox])')) { e.preventDefault(); fn(); }
+  });
+  box.querySelector('[data-submit]').addEventListener('click', fn);
+}
+
+/** Build a <select>. options = [[value, label], ...] */
+function mkSelect(options, current, props) {
+  const sel = h('select', props, options.map(([v, label]) => h('option', { value: v }, label)));
+  sel.value = String(current);
+  return sel;
+}
+
+/** Swap an array item with its neighbor. dir = -1 (up) or +1 (down). */
+function moveItem(arr, i, dir) {
+  const j = i + dir;
+  if (j < 0 || j >= arr.length) return false;
+  [arr[i], arr[j]] = [arr[j], arr[i]];
+  return true;
+}
+
+/** Small message at the bottom of the screen. Optional action button, e.g. { label: 'Undo', run: fn } */
+let toastTimer = null;
+function toast(msg, action) {
+  const t = $('#toast');
+  fill(t, h('span', null, msg),
+    action ? h('button', { class: 'toast-btn', type: 'button', onclick: () => { t.classList.remove('show'); action.run(); } }, action.label) : null);
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), action ? 6000 : 2600);
+}
+
+/** In-page "are you sure?" box. Returns a Promise that resolves to true or false.
+    (Chrome can silently block window.confirm(), so we never rely on it.) */
+function askConfirm(message, okLabel = 'Delete') {
+  return new Promise(resolve => {
+    const d = $('#confirmDialog');
+    $('#confirmMsg').textContent = message;
+    $('#confirmOk').textContent = okLabel;
+    const finish = value => {
+      $('#confirmOk').onclick = $('#confirmCancel').onclick = d.oncancel = null;
+      if (d.open) d.close();
+      resolve(value);
+    };
+    $('#confirmOk').onclick = () => finish(true);
+    $('#confirmCancel').onclick = () => finish(false);
+    d.oncancel = e => { e.preventDefault(); finish(false); };
+    d.showModal();
+    $('#confirmCancel').focus();
+  });
+}
+
+async function copyText(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch (e) {
+    // Fallback for pages where the Clipboard API is blocked
+    const ta = h('textarea', { style: 'position:fixed;opacity:0;top:0;left:0' });
+    ta.value = text;
+    document.body.append(ta);
+    ta.select();
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch (_) { /* ignore */ }
+    ta.remove();
+    return ok;
+  }
+}
+
+/* =====================================================================
+   4. DATE & TIME HELPERS
+   Dates are stored as "YYYY-MM-DD" strings in LOCAL time.
+   Times of day are stored as "minutes since midnight" (e.g. 8:30 AM = 510).
+   ===================================================================== */
+function dateKey(d = new Date()) { return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; }
+function parseKey(k) { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d); }
+function addDays(k, n) { const d = parseKey(k); d.setDate(d.getDate() + n); return dateKey(d); }
+/** A whole-number day count, safe across daylight-saving changes. */
+function dayNumber(k) { const [y, m, d] = k.split('-').map(Number); return Math.floor(Date.UTC(y, m - 1, d) / 86400000); }
+function daysBetween(a, b) { return dayNumber(b) - dayNumber(a); }
+/** Monday of the week containing date k. */
+function weekStart(k) { const dow = (parseKey(k).getDay() + 6) % 7; return addDays(k, -dow); }
+function nowMinutes() { const d = new Date(); return d.getHours() * 60 + d.getMinutes() + d.getSeconds() / 60; }
+function toHHMM(min) { const m = Math.max(0, Math.min(1439, Math.floor(min))); return `${pad(Math.floor(m / 60))}:${pad(m % 60)}`; }
+function parseHHMM(s) {
+  const m = /^(\d{1,2}):(\d{2})/.exec(String(s || '').trim());
+  return m ? Number(m[1]) * 60 + Number(m[2]) : null;
+}
+function fmtTime(min) {
+  if (min == null || isNaN(min)) return '—';
+  let m = Math.round(min), next = false;
+  if (m >= 1440) { m -= 1440; next = true; }
+  if (m < 0) m += 1440;
+  const hh = Math.floor(m / 60), mm = m % 60;
+  const h12 = hh % 12 === 0 ? 12 : hh % 12;
+  return `${h12}:${pad(mm)} ${hh >= 12 ? 'PM' : 'AM'}${next ? ' +1d' : ''}`;
+}
+function fmtDuration(min) {
+  const m = Math.max(0, Math.floor(min || 0));
+  const hh = Math.floor(m / 60), r = m % 60;
+  return hh ? (r ? `${hh}h ${pad(r)}m` : `${hh}h`) : `${r}m`;
+}
+function fmtDateLong(k) { return parseKey(k).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }); }
+function fmtDateShort(k) { return parseKey(k).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }); }
+function fmtDateMed(k) { return parseKey(k).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); }
+function nextDateFor(month, day) {
+  const t = dateKey();
+  const y = new Date().getFullYear();
+  let k = `${y}-${pad(month)}-${pad(day)}`;
+  if (k < t) k = `${y + 1}-${pad(month)}-${pad(day)}`;
+  return k;
+}
+
+/* =====================================================================
+   5. STATE & STORAGE
+   All data lives in one object called "state", saved to localStorage as JSON.
+   Per-day data lives in state.days["YYYY-MM-DD"].
+   save() waits a moment (debounce) so typing doesn't save on every key.
+   ===================================================================== */
+function defaultState() {
+  return {
+    schemaVersion: SCHEMA_VERSION,
+    settings: {
+      name: '',
+      theme: 'soft-light',
+      targetHours: 8,
+      breaksPaid: false,
+      gitlabBaseUrl: '',
+      winCategories: ['Bug Fix', 'Feature', 'Collaboration', 'Learning', 'Other'],
+      focusMinutes: 25,
+      breakMinutes: 5,
+      hiddenPanels: [],
+      lastBackup: null,
+      lastCarryCheck: null
+    },
+    stickyNotes: [
+      { id: uid(), title: 'Welcome!', body: 'Paste the info from your Windows Sticky Notes here.\nUse "+ New note" to add more notes. Everything saves automatically.' }
+    ],
+    links: [
+      { id: uid(), name: 'Unanet (Timesheet)', url: '#' },
+      { id: uid(), name: 'GitLab', url: '#' },
+      { id: uid(), name: 'My Calendar (Outlook)', url: 'https://outlook.office.com/calendar/' }
+    ],
+    snippets: [
+      { id: uid(), title: 'Start Angular dev server', content: 'ng serve --open' },
+      { id: uid(), title: 'Create a new branch', content: 'git checkout -b feature/' },
+      { id: uid(), title: 'Undo last commit (keep changes)', content: 'git reset --soft HEAD~1' }
+    ],
+    countdowns: [
+      { id: uid(), name: 'Christmas', date: nextDateFor(12, 25) }
+    ],
+    meetings: [],        // recurring meeting rules
+    oneOffMeetings: [],  // { id, date, title, start, end, link }
+    meetingSkips: [],    // "meetingId@YYYY-MM-DD" strings
+    days: {}
+  };
+}
+
+function emptyDay() { return { todos: [], notes: '', wins: [], clock: [], pomos: 0 }; }
+
+/** Fill in anything missing (e.g. data from an older version or a backup). */
+function migrate(s) {
+  const d = defaultState();
+  if (!s || typeof s !== 'object') return d;
+  const out = { ...d, ...s };
+  out.settings = { ...d.settings, ...(s.settings || {}) };
+  for (const key of ['stickyNotes', 'links', 'snippets', 'countdowns', 'meetings', 'oneOffMeetings', 'meetingSkips']) {
+    if (!Array.isArray(out[key])) out[key] = d[key];
+  }
+  if (!Array.isArray(out.settings.hiddenPanels)) out.settings.hiddenPanels = [];
+  if (!out.days || typeof out.days !== 'object' || Array.isArray(out.days)) out.days = {};
+  out.schemaVersion = SCHEMA_VERSION;
+  return out;
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? migrate(JSON.parse(raw)) : defaultState();
+  } catch (e) {
+    console.error('Could not load saved data', e);
+    showSaveError('Your saved data could not be read. If you have a backup, use Import to restore it.');
+    return defaultState();
+  }
+}
+
+let state = null;
+let saveTimer = null;
+
+function save() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveNow, 350);
+}
+
+function saveNow() {
+  clearTimeout(saveTimer);
+  saveTimer = null;
+  // Remove days that have nothing in them, to keep storage small
+  for (const k of Object.keys(state.days)) if (isDayEmpty(state.days[k])) delete state.days[k];
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    $('#saveBanner').hidden = true;
+  } catch (e) {
+    console.error('Save failed', e);
+    showSaveError("Your latest changes couldn't be saved (browser storage may be full or blocked). Export a backup now so nothing is lost.");
+  }
+}
+
+function showSaveError(msg) {
+  const b = $('#saveBanner');
+  fill(b, h('span', null, '⚠ ' + msg), h('button', { class: 'btn primary small', type: 'button', onclick: exportData }, 'Export backup'));
+  b.hidden = false;
+}
+
+/** Get the record for a day. Use create=true whenever you are about to change it. */
+function getDay(k, create = false) {
+  let d = state.days[k];
+  if (!d) {
+    if (!create) return emptyDay();
+    d = state.days[k] = emptyDay();
+  }
+  for (const [f, v] of Object.entries(emptyDay())) if (d[f] === undefined) d[f] = v;
+  return d;
+}
+
+function isDayEmpty(d) {
+  return !d || (!(d.todos || []).length && !(d.wins || []).length && !(d.clock || []).length &&
+    !String(d.notes || '').trim() && !String(d.reflection || '').trim() && !d.pomos);
+}
+function hasData(k) { return !!state.days[k] && !isDayEmpty(state.days[k]); }
+
+/* =====================================================================
+   6. VIEWED DATE
+   "today" is the real date. "viewDate" is the date the page shows.
+   Viewing a past date lets you read and edit that day's history.
+   ===================================================================== */
+let today = dateKey();
+let viewDate = today;
+const isToday = () => viewDate === today;
+
+function setViewDate(k) {
+  viewDate = k;
+  clockEditId = null;
+  renderDayPanels();
+  renderViewBanner();
+  $('#navToday').classList.toggle('active', isToday());
+}
+
+function renderViewBanner() {
+  const b = $('#viewBanner');
+  if (isToday()) { b.hidden = true; return; }
+  fill(b,
+    h('span', null, 'You are looking at ', h('strong', null, fmtDateLong(viewDate)), '. You can still edit it.'),
+    h('button', { class: 'btn primary small', type: 'button', onclick: () => setViewDate(today) }, 'Back to today'));
+  b.hidden = false;
+}
+
+/* =====================================================================
+   7. HEADER, THEME, BACKUP STATUS, PANEL VISIBILITY
+   ===================================================================== */
+function updateHeaderClock() {
+  const now = new Date();
+  const hr = now.getHours();
+  const part = hr < 12 ? 'Good morning' : hr < 17 ? 'Good afternoon' : 'Good evening';
+  const name = (state.settings.name || '').trim();
+  $('#greeting').textContent = name ? `Hello, ${name}` : part;
+  $('#viewDateText').textContent = parseKey(viewDate).toLocaleDateString('en-US', { weekday: 'short', month: 'long', day: 'numeric', year: 'numeric' });
+  $('#liveClock').textContent = (name ? part + ' · ' : '') + now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+}
+
+function applyTheme() {
+  const id = THEMES.some(t => t.id === state.settings.theme) ? state.settings.theme : 'soft-light';
+  document.documentElement.dataset.theme = id;
+  $('#themeSelect').value = id;
+}
+
+function renderBackupStatus() {
+  const el = $('#backupText');
+  const last = state.settings.lastBackup;
+  if (!last) { el.textContent = 'No backup yet'; el.className = 'small warn'; return; }
+  const days = daysBetween(dateKey(new Date(last)), today);
+  el.textContent = days <= 0 ? 'Last backup: today' : `Last backup: ${days} day${days === 1 ? '' : 's'} ago`;
+  el.className = 'small ' + (days > 7 ? 'warn' : 'muted');
+}
+
+function applyPanelVisibility() {
+  const hidden = state.settings.hiddenPanels || [];
+  document.querySelectorAll('[data-panel]').forEach(sec => { sec.hidden = hidden.includes(sec.dataset.panel); });
+}
+
+/* =====================================================================
+   8. TIME CLOCK (right column)
+   Each day stores a list of events: { id, type, t } where type is
+   in / breakStart / breakEnd / out and t is minutes since midnight.
+   computeDay() walks through the events in time order to total worked time.
+   ===================================================================== */
+let clockEditId = null;   // id of the time-log entry being edited (or null)
+let clockLogOpen = false; // remembers whether the time log is expanded
+
+function computeDay(k) {
+  const d = state.days[k];
+  const events = d ? [...(d.clock || [])].sort((a, b) => a.t - b.t) : [];
+  const live = k === today;
+  const now = nowMinutes();
+  let st = 'out', inStart = 0, brStart = 0, gross = 0, brk = 0, lastOut = null, sinceT = null, firstIn = null;
+
+  for (const e of events) {
+    if (e.type === 'in' && st === 'out') { st = 'in'; inStart = e.t; sinceT = e.t; if (firstIn == null) firstIn = e.t; }
+    else if (e.type === 'breakStart' && st === 'in') { st = 'break'; brStart = e.t; sinceT = e.t; }
+    else if (e.type === 'breakEnd' && st === 'break') { brk += e.t - brStart; st = 'in'; sinceT = e.t; }
+    else if (e.type === 'out' && st !== 'out') {
+      if (st === 'break') brk += e.t - brStart;
+      gross += e.t - inStart; st = 'out'; lastOut = e.t; sinceT = e.t;
+    }
+  }
+
+  let incomplete = false;
+  if (st !== 'out') {
+    if (live) {
+      const end = Math.max(now, sinceT);
+      if (st === 'break') brk += end - brStart;
+      gross += end - inStart;
+    } else {
+      incomplete = true; // a past day with no clock-out
+    }
+  }
+  const worked = state.settings.breaksPaid ? gross : gross - brk;
+  return { state: st, worked: Math.max(0, worked), breakMin: brk, lastOut, sinceT, firstIn, incomplete, count: events.length, brStart };
+}
+
+function targetHours() { return Math.max(0.5, Number(state.settings.targetHours) || 8); }
+function leaveHours() { return [...new Set([...LEAVE_HOURS, targetHours()])].sort((a, b) => a - b); }
+
+function refreshSummary() { renderStats(); renderChart(); }
+
+function clockAction(type) {
+  const d = getDay(today, true);
+  d.clock.push({ id: uid(), type, t: Math.floor(nowMinutes()) });
+  save();
+  renderClock();
+  refreshSummary();
+}
+
+function deleteClockEntry(k, id) {
+  const d = getDay(k, true);
+  const removed = d.clock.find(x => x.id === id);
+  if (!removed) return;
+  d.clock = d.clock.filter(x => x.id !== id);
+  if (clockEditId === id) clockEditId = null;
+  save(); renderClock(); refreshSummary();
+  toast(`${CLOCK_LABELS[removed.type]} at ${fmtTime(removed.t)} deleted`, {
+    label: 'Undo',
+    run: () => { getDay(k, true).clock.push(removed); save(); renderClock(); refreshSummary(); }
+  });
+}
+
+function saveClockEdit(k, id, value) {
+  const m = parseHHMM(value);
+  if (m == null) { toast('Please enter a full time, like 08:30 AM.'); return; }
+  const item = getDay(k, true).clock.find(x => x.id === id);
+  if (item) item.t = m;
+  clockEditId = null;
+  save(); renderClock(); refreshSummary();
+  toast('Time updated');
+}
+
+function renderClock() {
+  const k = viewDate;
+  const live = isToday();
+  const c = computeDay(k);
+  const d = getDay(k);
+
+  // Progress ring with worked time in the middle (updated every second by updateClockLive)
+  const R = 54, CIRC = 2 * Math.PI * R;
+  const ring = h('div', { class: 'ring' },
+    svg('svg', { viewBox: '0 0 128 128', 'aria-hidden': 'true' },
+      svg('circle', { class: 'ring-track', cx: 64, cy: 64, r: R, fill: 'none', 'stroke-width': 9 }),
+      svg('circle', { class: 'ring-bar', id: 'ringBar', cx: 64, cy: 64, r: R, fill: 'none', 'stroke-width': 9, 'stroke-linecap': 'round', 'stroke-dasharray': CIRC, 'stroke-dashoffset': CIRC })),
+    h('div', { class: 'ring-center' }, h('strong', { id: 'clockWorked' }, '0m'), h('span', null, `of ${targetHours()}h`)),
+    h('span', { class: 'ring-dot', id: 'ringDot' }));
+
+  // Round action buttons (only for today)
+  let actions = null;
+  if (live) {
+    const act = (label, ico, onclick, enabled, primary) => h('div', { class: 'act' },
+      h('button', { class: 'circle-btn' + (primary && enabled ? ' primary' : ''), type: 'button', title: label, 'aria-label': label, disabled: !enabled, onclick }, icon(ico)),
+      label);
+    actions = h('div', { class: 'clock-actions' },
+      c.state === 'break'
+        ? act('End break', 'back', () => clockAction('breakEnd'), true, true)
+        : act(c.count && c.state === 'out' ? 'Clock in again' : 'Clock in', 'play', () => clockAction('in'), c.state === 'out', true),
+      c.state !== 'break' ? act('Break', 'coffee', () => clockAction('breakStart'), c.state === 'in', false) : null,
+      act('Clock out', 'stop', () => clockAction('out'), c.state !== 'out', false));
+  }
+
+  // "You can leave at" chips (times are filled in by updateClockLive)
+  const tgt = targetHours();
+  const leave = live && c.state !== 'out'
+    ? h('div', { class: 'leave' },
+      h('div', { class: 'leave-label' }, c.state === 'break' && !state.settings.breaksPaid ? 'You can leave at… (moves later while on break)' : 'You can leave at…'),
+      h('div', { class: 'leave-chips', id: 'leaveChips' },
+        leaveHours().map(hr => h('span', { class: 'leave-chip' + (hr === tgt ? ' target' : ''), 'data-hours': hr }, h('b', null, hr + 'h'), h('span', { class: 'leave-t' }, '—')))))
+    : null;
+
+  $('#clockBody').classList.toggle('past-day', !live);
+  fill($('#clockBody'),
+    ring,
+    h('div', { class: 'clock-name', id: 'clockStatus' }),
+    h('div', { class: 'clock-handle', id: 'clockHandle' }),
+    !live && c.incomplete ? h('div', { class: 'warning-text' }, 'No clock-out was recorded for this day. Add one in the time log.') : null,
+    actions,
+    h('div', { class: 'target-diff', id: 'clockTargetDiff' }),
+    leave,
+    renderTimeLog(k, d));
+  updateClockLive();
+}
+
+/** The list of clock entries, with Edit (✎) and Delete (✕) for each one. */
+function renderTimeLog(k, d) {
+  const sorted = [...d.clock].sort((a, b) => a.t - b.t);
+  const rows = sorted.map(e => {
+    const label = h('span', { class: 'log-type type-' + e.type }, h('span', { class: 'dot' }), CLOCK_LABELS[e.type] || e.type);
+    if (e.id === clockEditId) {
+      const input = h('input', { type: 'time', value: toHHMM(e.t), 'aria-label': 'New time for ' + (CLOCK_LABELS[e.type] || 'entry') });
+      input.addEventListener('keydown', ev => {
+        if (ev.key === 'Enter') { ev.preventDefault(); saveClockEdit(k, e.id, input.value); }
+        if (ev.key === 'Escape') { clockEditId = null; renderClock(); }
+      });
+      setTimeout(() => input.focus(), 0);
+      return h('li', { class: 'log-row' }, label, input,
+        h('button', { class: 'btn small primary', type: 'button', onclick: () => saveClockEdit(k, e.id, input.value) }, 'Save'),
+        h('button', { class: 'btn small', type: 'button', onclick: () => { clockEditId = null; renderClock(); } }, 'Cancel'));
+    }
+    return h('li', { class: 'log-row' }, label,
+      h('span', { class: 'log-time' }, fmtTime(e.t)),
+      h('button', { class: 'icon-btn', type: 'button', title: 'Edit time', 'aria-label': 'Edit time', onclick: () => { clockEditId = e.id; clockLogOpen = true; renderClock(); } }, icon('pencil')),
+      h('button', { class: 'icon-btn', type: 'button', title: 'Delete entry', 'aria-label': 'Delete entry', onclick: () => deleteClockEntry(k, e.id) }, icon('x')));
+  });
+
+  // Add a missed entry (e.g. you forgot to clock in)
+  const c = computeDay(k);
+  const addType = mkSelect(Object.entries(CLOCK_LABELS), c.state === 'out' ? 'in' : 'out', { 'aria-label': 'Entry type' });
+  const addTime = h('input', { type: 'time', value: isToday() ? toHHMM(nowMinutes()) : '17:00', 'aria-label': 'Entry time' });
+  const add = () => {
+    const m = parseHHMM(addTime.value);
+    if (m == null) { toast('Pick a time first.'); return; }
+    getDay(k, true).clock.push({ id: uid(), type: addType.value, t: m });
+    clockLogOpen = true;
+    save(); renderClock(); refreshSummary();
+    toast(`${CLOCK_LABELS[addType.value]} added at ${fmtTime(m)}`);
+  };
+
+  const details = h('details', { class: 'timelog', open: clockLogOpen || clockEditId != null },
+    h('summary', null, `Time log (${sorted.length} ${sorted.length === 1 ? 'entry' : 'entries'})`),
+    sorted.length ? h('ul', { class: 'log-list' }, rows) : h('p', { class: 'empty small' }, 'No entries yet.'),
+    h('div', { class: 'log-add' }, addType, addTime, h('button', { class: 'btn small', type: 'button', onclick: add }, '+ Add')));
+  details.addEventListener('toggle', () => { clockLogOpen = details.open; });
+  return details;
+}
+
+/** Updates the clock numbers that change every second (called by the main timer). */
+function updateClockLive() {
+  const statusEl = $('#clockStatus');
+  if (!statusEl) return;
+  const k = viewDate, live = isToday();
+  const c = computeDay(k);
+
+  let name, handle;
+  if (!c.count) { name = live ? 'Not clocked in' : 'No time recorded'; handle = live ? 'Ready when you are' : fmtDateShort(k); }
+  else if (c.state === 'in') { name = live ? 'Clocked in' : 'Clocked in (no clock-out)'; handle = `since ${fmtTime(c.sinceT)}${c.breakMin ? ' · breaks ' + fmtDuration(c.breakMin) : ''}`; }
+  else if (c.state === 'break') { name = live ? 'On break' : 'On break (no clock-out)'; handle = live ? `since ${fmtTime(c.brStart)} · ${fmtDuration(nowMinutes() - c.brStart)} so far` : ''; }
+  else { name = 'Clocked out'; handle = `${fmtTime(c.firstIn)} – ${fmtTime(c.lastOut)}${c.breakMin ? ' · breaks ' + fmtDuration(c.breakMin) : ''}`; }
+  statusEl.textContent = name;
+  $('#clockHandle').textContent = handle;
+  $('#clockWorked').textContent = fmtDuration(c.worked);
+
+  const bar = $('#ringBar');
+  if (bar) {
+    const circ = Number(bar.getAttribute('stroke-dasharray'));
+    bar.setAttribute('stroke-dashoffset', circ * (1 - Math.min(1, c.worked / (targetHours() * 60))));
+  }
+  $('#ringDot').className = 'ring-dot ' + (c.state === 'out' ? '' : c.state);
+
+  const diffEl = $('#clockTargetDiff');
+  if (c.state === 'out' && c.count) {
+    const diff = c.worked - targetHours() * 60;
+    diffEl.textContent = diff >= 0 ? `✓ ${fmtDuration(diff)} over your ${targetHours()}h target` : `${fmtDuration(-diff)} short of your ${targetHours()}h target`;
+    diffEl.style.color = diff >= 0 ? 'var(--success)' : 'var(--muted)';
+  } else diffEl.textContent = '';
+
+  const chips = $('#leaveChips');
+  if (chips) {
+    const now = nowMinutes();
+    chips.querySelectorAll('.leave-chip').forEach(chip => {
+      const remaining = Number(chip.dataset.hours) * 60 - c.worked;
+      const tEl = chip.querySelector('.leave-t');
+      if (remaining <= 0) { tEl.textContent = '✓'; chip.classList.add('reached'); }
+      else { tEl.textContent = fmtTime(Math.ceil(now + remaining)); chip.classList.remove('reached'); }
+    });
+  }
+}
+
+/* =====================================================================
+   9. SUMMARY NUMBERS (the row under the greeting)
+   ===================================================================== */
+function setDelta(el, text, dir) {
+  el.textContent = text ? (dir === 'up' ? '▲ ' : dir === 'down' ? '▼ ' : '') + text : '';
+  el.className = 'delta ' + (dir || 'flat');
+}
+
+function weekWorked(start, uptoIndex = 6) {
+  let total = 0;
+  for (let i = 0; i <= uptoIndex; i++) total += computeDay(addDays(start, i)).worked;
+  return total;
+}
+
+function renderStats() {
+  const k = viewDate;
+  const d = getDay(k);
+  const done = d.todos.filter(t => t.done).length;
+  const prevDone = getDay(addDays(k, -1)).todos.filter(t => t.done).length;
+  $('#statDone').textContent = d.todos.length ? `${done}/${d.todos.length}` : String(done);
+  const dd = done - prevDone;
+  setDelta($('#statDoneDelta'), dd === 0 ? 'same as yesterday' : `${dd > 0 ? '+' : ''}${dd} vs yesterday`, dd > 0 ? 'up' : dd < 0 ? 'down' : 'flat');
+
+  const c = computeDay(k);
+  const tgtMin = targetHours() * 60;
+  $('#statTracked').textContent = fmtDuration(c.worked);
+  if (!c.count) setDelta($('#statTrackedDelta'), `goal ${targetHours()}h`, 'flat');
+  else if (c.worked >= tgtMin) setDelta($('#statTrackedDelta'), `+${fmtDuration(c.worked - tgtMin)} over goal`, 'up');
+  else setDelta($('#statTrackedDelta'), `${fmtDuration(tgtMin - c.worked)} to go`, 'down');
+
+  const ws = weekStart(k);
+  const idx = daysBetween(ws, k);
+  const thisWeek = weekWorked(ws, idx);
+  const lastWeek = weekWorked(addDays(ws, -7), idx);
+  $('#statWeek').textContent = fmtDuration(thisWeek);
+  const wd = thisWeek - lastWeek;
+  if (!thisWeek && !lastWeek) setDelta($('#statWeekDelta'), '', 'flat');
+  else setDelta($('#statWeekDelta'), `${wd >= 0 ? '+' : '-'}${fmtDuration(Math.abs(wd))} vs last week`, wd >= 0 ? 'up' : 'down');
+
+  let weekWins = 0;
+  for (let i = 0; i < 7; i++) weekWins += getDay(addDays(ws, i)).wins.length;
+  $('#statWins').textContent = String(weekWins);
+  setDelta($('#statWinsDelta'), d.wins.length ? `+${d.wins.length} ${isToday() ? 'today' : 'this day'}` : 'this week', d.wins.length ? 'up' : 'flat');
+
+  // The line under "Hello, ..."
+  const sub = $('#helloSub');
+  if (!isToday()) sub.textContent = `Looking back at ${fmtDateLong(k)}.`;
+  else if (!d.todos.length && !c.count) sub.textContent = 'Plan your objectives and track your time here.';
+  else {
+    const parts = [];
+    if (d.todos.length) parts.push(done === d.todos.length ? 'All objectives done! 🎉' : `${done} of ${d.todos.length} objectives done`);
+    if (c.count) parts.push(c.worked >= tgtMin ? `you reached your ${targetHours()}h goal` : `${fmtDuration(tgtMin - c.worked)} to your ${targetHours()}h goal`);
+    sub.textContent = parts.join(' · ') + '.';
+  }
+}
+
+/* =====================================================================
+   10. HOURS CHART
+   Line chart of hours worked per day: the chosen week (solid, filled)
+   vs the week before (orange line), plus a dashed target line.
+   ===================================================================== */
+function smoothPath(pts, minY = -Infinity, maxY = Infinity) {
+  const cy = v => Math.min(maxY, Math.max(minY, v)); // keep the curve from dipping below 0h
+  if (!pts.length) return '';
+  if (pts.length === 1) return `M${pts[0][0]},${pts[0][1]}`;
+  let d = `M${pts[0][0]},${pts[0][1]}`;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2;
+    const c1 = [p1[0] + (p2[0] - p0[0]) / 6, cy(p1[1] + (p2[1] - p0[1]) / 6)];
+    const c2 = [p2[0] - (p3[0] - p1[0]) / 6, cy(p2[1] - (p3[1] - p1[1]) / 6)];
+    d += ` C${c1[0]},${c1[1]} ${c2[0]},${c2[1]} ${p2[0]},${p2[1]}`;
+  }
+  return d;
+}
+
+function renderChart() {
+  const wrap = $('#chartWrap');
+  if (!wrap) return;
+  const offset = Number($('#chartWeek').value) || 0;
+  const ws = addDays(weekStart(viewDate), -7 * offset);
+  const prev = addDays(ws, -7);
+  const days = [...Array(7)].map((_, i) => addDays(ws, i));
+  const cur = days.map(k => (k > today ? null : computeDay(k).worked / 60));
+  const old = days.map((_, i) => computeDay(addDays(prev, i)).worked / 60);
+
+  const W = 760, H = 250, L = 42, R = 14, T = 14, B = 34;
+  const maxVal = Math.max(10, targetHours() + 2, ...cur.filter(v => v != null), ...old);
+  const yMax = Math.ceil(maxVal / 2) * 2;
+  const x = i => L + (i * (W - L - R)) / 6;
+  const y = v => T + (1 - v / yMax) * (H - T - B);
+
+  const grid = [];
+  for (let v = 0; v <= yMax; v += yMax > 12 ? 4 : 2) {
+    grid.push(svg('text', { x: 0, y: y(v) + 4, class: 'axis-text' }, v + 'h'));
+  }
+  const labels = days.map((k, i) => svg('text', { x: x(i), y: H - 8, 'text-anchor': 'middle', class: 'axis-text' + (k === viewDate ? ' axis-today' : '') },
+    `${DAY_NAMES[parseKey(k).getDay()]} ${parseKey(k).getDate()}`));
+
+  const curPts = cur.map((v, i) => (v == null ? null : [x(i), y(v)])).filter(Boolean);
+  const oldPts = old.map((v, i) => [x(i), y(v)]);
+  const area = curPts.length > 1 ? `${smoothPath(curPts, T, y(0))} L${curPts[curPts.length - 1][0]},${y(0)} L${curPts[0][0]},${y(0)} Z` : '';
+
+  const hoverLine = svg('line', { y1: T, y2: y(0), stroke: 'var(--muted)', 'stroke-dasharray': '4 4', opacity: 0 });
+  const dotCur = svg('circle', { r: 5, fill: 'var(--accent)', stroke: 'var(--surface)', 'stroke-width': 2, opacity: 0 });
+  const dotOld = svg('circle', { r: 5, fill: 'var(--accent-2)', stroke: 'var(--surface)', 'stroke-width': 2, opacity: 0 });
+  const tip = h('div', { class: 'chart-tip', hidden: true });
+
+  const showTip = i => {
+    const px = x(i);
+    hoverLine.setAttribute('x1', px); hoverLine.setAttribute('x2', px); hoverLine.setAttribute('opacity', .6);
+    if (cur[i] != null) { dotCur.setAttribute('cx', px); dotCur.setAttribute('cy', y(cur[i])); dotCur.setAttribute('opacity', 1); }
+    else dotCur.setAttribute('opacity', 0);
+    dotOld.setAttribute('cx', px); dotOld.setAttribute('cy', y(old[i])); dotOld.setAttribute('opacity', 1);
+    fill(tip, h('strong', null, fmtDateMed(days[i])),
+      h('div', { style: 'border-color:var(--accent)' }, h('span', null, 'This week'), h('b', null, cur[i] == null ? '—' : fmtDuration(cur[i] * 60))),
+      h('div', { style: 'border-color:var(--accent-2)' }, h('span', null, 'Week before'), h('b', null, fmtDuration(old[i] * 60))));
+    const rect = wrap.getBoundingClientRect();
+    const scale = rect.width / W;
+    tip.style.left = Math.min(Math.max(px * scale, 90), rect.width - 90) + 'px';
+    tip.style.top = (Math.min(y(cur[i] ?? old[i]), y(old[i])) * scale - 12) + 'px';
+    tip.hidden = false;
+  };
+  const hideTip = () => { tip.hidden = true; [hoverLine, dotCur, dotOld].forEach(el => el.setAttribute('opacity', 0)); };
+
+  const hits = days.map((_, i) => {
+    const r = svg('rect', { x: x(i) - (W - L - R) / 12, y: 0, width: (W - L - R) / 6, height: H, fill: 'transparent', style: 'cursor:pointer' });
+    r.addEventListener('mouseenter', () => showTip(i));
+    r.addEventListener('click', () => showTip(i));
+    return r;
+  });
+
+  const chart = svg('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Hours worked per day this week compared with the week before' },
+    svg('defs', null, svg('linearGradient', { id: 'areaFill', x1: 0, y1: 0, x2: 0, y2: 1 },
+      svg('stop', { offset: '0%', 'stop-color': 'var(--accent)', 'stop-opacity': .22 }),
+      svg('stop', { offset: '100%', 'stop-color': 'var(--accent)', 'stop-opacity': 0 }))),
+    grid,
+    svg('line', { x1: L, x2: W - R, y1: y(targetHours()), y2: y(targetHours()), stroke: 'var(--muted)', 'stroke-dasharray': '2 6', 'stroke-width': 1.5, opacity: .6 }),
+    svg('text', { x: W - R, y: y(targetHours()) - 6, 'text-anchor': 'end', class: 'axis-text' }, `target ${targetHours()}h`),
+    area ? svg('path', { d: area, fill: 'url(#areaFill)' }) : null,
+    svg('path', { d: smoothPath(oldPts, T, y(0)), fill: 'none', stroke: 'var(--accent-2)', 'stroke-width': 2.5, 'stroke-linecap': 'round' }),
+    curPts.length ? svg('path', { d: smoothPath(curPts, T, y(0)), fill: 'none', stroke: 'var(--accent)', 'stroke-width': 3, 'stroke-linecap': 'round' }) : null,
+    labels, hoverLine, dotOld, dotCur, hits);
+  chart.addEventListener('mouseleave', hideTip);
+
+  fill(wrap, chart, tip);
+  fill($('#chartLegend'),
+    h('span', null, h('i', { style: 'background:var(--accent)' }), offset === 0 ? 'This week' : 'Selected week'),
+    h('span', null, h('i', { style: 'background:var(--accent-2)' }), 'Week before'));
+}
+
+/* =====================================================================
+   11. MEETINGS (right column)
+   Recurring meetings are "rules" (weekly, every N weeks, monthly...).
+   meetingOccursOn() checks whether a rule lands on a given date.
+   ===================================================================== */
+function meetingOccursOn(m, k) {
+  if (m.startDate && k < m.startDate) return false;
+  if (m.endDate && k > m.endDate) return false;
+  const d = parseKey(k);
+  const dow = d.getDay(), dom = d.getDate();
+  const daysInMonth = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+  const r = m.rule || {};
+  switch (r.type) {
+    case 'weekly':
+      return (r.days || []).includes(dow);
+    case 'everyNWeeks': {
+      if (!(r.days || []).includes(dow)) return false;
+      const anchor = r.anchor || m.startDate || k;
+      const n = Math.max(1, Number(r.interval) || 1);
+      const weeks = Math.round(daysBetween(weekStart(anchor), weekStart(k)) / 7);
+      return ((weeks % n) + n) % n === 0;
+    }
+    case 'monthlyNth':
+      if (dow !== Number(r.weekday)) return false;
+      if (Number(r.nth) === -1) return dom + 7 > daysInMonth;
+      return Math.ceil(dom / 7) === Number(r.nth);
+    case 'monthlyDay':
+      return dom === Math.min(Number(r.dayOfMonth) || 1, daysInMonth);
+    default:
+      return false;
+  }
+}
+
+function meetingsForDate(k) {
+  const list = [];
+  for (const m of state.meetings) {
+    if (meetingOccursOn(m, k)) list.push({ ...m, kind: 'recurring', skipped: state.meetingSkips.includes(`${m.id}@${k}`) });
+  }
+  for (const o of state.oneOffMeetings) if (o.date === k) list.push({ ...o, kind: 'oneoff', skipped: false });
+  return list.sort((a, b) => (parseHHMM(a.start) ?? 0) - (parseHHMM(b.start) ?? 0));
+}
+
+function toggleSkip(id, k) {
+  const key = `${id}@${k}`;
+  const i = state.meetingSkips.indexOf(key);
+  if (i >= 0) state.meetingSkips.splice(i, 1); else state.meetingSkips.push(key);
+  save(); renderMeetings();
+}
+
+function initials(title) {
+  const words = String(title || '?').replace(/[^\p{L}\p{N} ]/gu, ' ').split(/\s+/).filter(Boolean);
+  return ((words[0] || '?')[0] + (words[1] ? words[1][0] : '')).toUpperCase();
+}
+function colorIndex(text) { let n = 0; for (const ch of String(text)) n = (n * 31 + ch.charCodeAt(0)) % 997; return n % 3; }
+
+function renderMeetings() {
+  const k = viewDate;
+  $('#meetingsSub').textContent = isToday() ? 'Today' : fmtDateShort(k);
+  const occ = meetingsForDate(k);
+  const box = $('#meetingsList');
+  if (!occ.length) {
+    fill(box, h('p', { class: 'empty', style: 'text-align:center' }, state.meetings.length || state.oneOffMeetings.length
+      ? 'No meetings on this day. 🎉'
+      : 'No meetings yet. Use "Edit recurring" to add your regular meetings.'));
+    return;
+  }
+  const now = nowMinutes();
+  let nextShown = false;
+  fill(box, h('ul', { class: 'activity' }, occ.map(m => {
+    const s = parseHHMM(m.start) ?? 0;
+    const e = parseHHMM(m.end) ?? s;
+    let cls = 'act-item', chip = null, isNow = false;
+    if (m.skipped) cls += ' skipped';
+    else if (isToday()) {
+      if (now >= s && now < e) { isNow = true; chip = h('span', { class: 'chip accent' }, 'Now'); }
+      else if (now >= Math.max(e, s + 1)) cls += ' past';
+      else if (!nextShown && now < s) { nextShown = true; chip = h('span', { class: 'chip accent-2' }, 'in ' + fmtDuration(Math.ceil(s - now))); }
+    }
+    return h('li', { class: cls },
+      h('span', { class: 'avatar c' + colorIndex(m.title) }, initials(m.title), isNow ? h('span', { class: 'badge' }) : null),
+      h('div', null,
+        h('div', { class: 'act-top' }, h('span', { class: 'act-title' }, m.title || '(untitled)'), h('span', { class: 'act-time' }, fmtTime(s))),
+        h('div', { class: 'act-sub' },
+          m.end ? `until ${fmtTime(e)}` : null,
+          m.kind === 'oneoff' ? h('span', { class: 'chip' }, 'one-off') : null,
+          m.skipped ? h('span', { class: 'chip' }, 'skipped') : null,
+          chip,
+          m.kind === 'recurring'
+            ? h('button', { class: 'btn-link', type: 'button', title: 'Skip only this day (e.g. canceled)', onclick: () => toggleSkip(m.id, k) }, m.skipped ? 'Undo skip' : 'Skip')
+            : h('button', { class: 'btn-link', type: 'button', onclick: () => { state.oneOffMeetings = state.oneOffMeetings.filter(x => x.id !== m.id); save(); renderMeetings(); } }, 'Remove')),
+        m.notes ? h('div', { class: 'bubble' }, m.notes) : null,
+        m.link && !m.skipped ? h('a', { class: 'join-card', href: m.link, target: '_blank', rel: 'noopener' }, icon('video'), 'Join meeting') : null));
+  })));
+}
+
+function describeRule(m) {
+  const r = m.rule || {};
+  const dayList = (r.days || []).slice().sort((a, b) => ((a + 6) % 7) - ((b + 6) % 7));
+  const daysText = dayList.join(',') === '1,2,3,4,5' ? 'weekday' : dayList.map(d => DAY_NAMES[d]).join(', ') || '(no days picked)';
+  const ord = { 1: '1st', 2: '2nd', 3: '3rd', 4: '4th', '-1': 'last' };
+  let txt;
+  switch (r.type) {
+    case 'weekly': txt = `Every ${daysText}`; break;
+    case 'everyNWeeks': txt = `Every ${r.interval || 2} weeks on ${daysText}`; break;
+    case 'monthlyNth': txt = `The ${ord[r.nth] || '?'} ${DAY_NAMES_LONG[r.weekday] || '?'} of each month`; break;
+    case 'monthlyDay': txt = `Day ${r.dayOfMonth || 1} of each month`; break;
+    default: txt = 'No schedule';
+  }
+  const t = m.start ? ` · ${fmtTime(parseHHMM(m.start))}${m.end ? '–' + fmtTime(parseHHMM(m.end)) : ''}` : '';
+  return txt + t;
+}
+
+/* =====================================================================
+   12. OBJECTIVES / TO-DOS (per day) + CARRY-OVER
+   Each to-do: { id, text, done, high, created, carried? }
+   "carried" = it was copied forward to a later day.
+   ===================================================================== */
+function findTodo(id) { return getDay(viewDate, true).todos.find(t => t.id === id); }
+function afterTodoChange() { save(); renderTodos(); renderStats(); }
+
+function renderTodos() {
+  const d = getDay(viewDate);
+  const done = d.todos.filter(t => t.done).length;
+  $('#todoSub').textContent = `Done ${d.todos.length ? Math.round((done / d.todos.length) * 100) : 0}%`;
+  const box = $('#todoList');
+  if (!d.todos.length) {
+    fill(box, h('p', { class: 'empty' }, isToday() ? 'No objectives yet. What would make today a win?' : 'No objectives were recorded for this day.'));
+    return;
+  }
+  const n = d.todos.length;
+  fill(box, h('ul', { class: 'task-list' }, d.todos.map((t, i) => {
+    let status;
+    if (t.carried) status = [h('span', { class: 'dot' }), 'Moved forward'];
+    else if (t.done) status = [h('span', { class: 'dot', style: 'background:var(--success)' }), 'Done'];
+    else if (t.high) status = [h('span', { class: 'dot', style: 'background:var(--accent-2)' }), 'High priority'];
+    else status = [h('span', { class: 'dot', style: 'background:var(--accent)' }), 'To do'];
+    return h('li', { class: 'task' + (t.done ? ' done' : '') + (t.high ? ' high' : '') + (t.carried ? ' carried' : '') },
+      h('button', {
+        class: 'task-check', type: 'button', disabled: !!t.carried, 'aria-pressed': String(!!t.done),
+        title: t.done ? 'Mark as not done' : 'Mark as done', 'aria-label': t.done ? 'Mark as not done' : 'Mark as done',
+        onclick: () => { const it = findTodo(t.id); if (it) { it.done = !it.done; afterTodoChange(); } }
+      }, icon(t.done ? 'check' : t.carried ? 'forward' : t.high ? 'flag' : 'circle')),
+      h('div', { class: 'task-main' },
+        h('input', {
+          type: 'text', class: 'task-text', value: t.text, 'aria-label': 'Objective',
+          oninput: e => { const it = findTodo(t.id); if (it) { it.text = e.target.value; save(); } }
+        }),
+        t.created && t.created !== viewDate ? h('span', { class: 'chip', title: 'First added ' + fmtDateLong(t.created) }, 'from ' + fmtDateShort(t.created)) : null),
+      h('span', { class: 'task-status' }, status),
+      h('span', { class: 'task-actions' },
+        h('button', {
+          class: 'icon-btn' + (t.high ? ' active' : ''), type: 'button', title: 'High priority', 'aria-label': 'High priority', 'aria-pressed': String(!!t.high),
+          onclick: () => { const it = findTodo(t.id); if (it) { it.high = !it.high; afterTodoChange(); } }
+        }, icon('star')),
+        h('button', { class: 'icon-btn', type: 'button', title: 'Move up', 'aria-label': 'Move up', disabled: i === 0, onclick: () => { moveItem(getDay(viewDate, true).todos, i, -1); afterTodoChange(); } }, icon('up')),
+        h('button', { class: 'icon-btn', type: 'button', title: 'Move down', 'aria-label': 'Move down', disabled: i === n - 1, onclick: () => { moveItem(getDay(viewDate, true).todos, i, 1); afterTodoChange(); } }, icon('down')),
+        h('button', {
+          class: 'icon-btn', type: 'button', title: 'Delete', 'aria-label': 'Delete',
+          onclick: () => {
+            const k = viewDate, dd = getDay(k, true), pos = dd.todos.findIndex(x => x.id === t.id);
+            if (pos < 0) return;
+            const [removed] = dd.todos.splice(pos, 1);
+            afterTodoChange();
+            toast('Objective deleted', { label: 'Undo', run: () => { getDay(k, true).todos.splice(pos, 0, removed); afterTodoChange(); } });
+          }
+        }, icon('x'))));
+  })));
+}
+
+function checkCarryOver() {
+  const banner = $('#carryBanner');
+  if (state.settings.lastCarryCheck === today) { banner.hidden = true; return; }
+  const prevKeys = Object.keys(state.days).filter(k => k < today && (state.days[k].todos || []).length).sort();
+  const pk = prevKeys[prevKeys.length - 1];
+  const items = pk ? state.days[pk].todos.filter(t => !t.done && !t.carried) : [];
+  if (!items.length) {
+    state.settings.lastCarryCheck = today; save();
+    banner.hidden = true;
+    return;
+  }
+  const finish = () => { state.settings.lastCarryCheck = today; save(); banner.hidden = true; };
+  const pickBox = h('div', { class: 'carry-pick', hidden: true },
+    items.map(t => h('label', { class: 'check-row' }, h('input', { type: 'checkbox', checked: true, value: t.id }), t.text || '(blank)')),
+    h('div', null, h('button', {
+      class: 'btn primary small', type: 'button', onclick: () => {
+        const ids = [...pickBox.querySelectorAll('input:checked')].map(i => i.value);
+        carryForward(pk, ids); finish();
+      }
+    }, 'Bring selected forward')));
+  fill(banner,
+    h('span', null, `📋 You have ${items.length} unfinished objective${items.length === 1 ? '' : 's'} from ${fmtDateLong(pk)}. Bring ${items.length === 1 ? 'it' : 'them'} forward?`),
+    h('span', { class: 'row' },
+      h('button', { class: 'btn primary small', type: 'button', onclick: () => { carryForward(pk, items.map(t => t.id)); finish(); } }, 'Bring all'),
+      h('button', { class: 'btn small', type: 'button', onclick: () => { pickBox.hidden = !pickBox.hidden; } }, 'Choose…'),
+      h('button', { class: 'btn small', type: 'button', onclick: finish }, 'Dismiss')),
+    pickBox);
+  banner.hidden = false;
+}
+
+function carryForward(fromKey, ids) {
+  const src = state.days[fromKey];
+  const dst = getDay(today, true);
+  let n = 0;
+  for (const t of src.todos) {
+    if (!ids.includes(t.id)) continue;
+    dst.todos.push({ id: uid(), text: t.text, done: false, high: !!t.high, created: t.created || fromKey });
+    t.carried = true;
+    n++;
+  }
+  save();
+  renderTodos();
+  renderStats();
+  if (n) toast(`Brought ${n} objective${n === 1 ? '' : 's'} forward`);
+}
+
+/* =====================================================================
+   13. WINS LOG (per day)
+   Each win: { id, text, cat }
+   ===================================================================== */
+function renderWins() {
+  const sel = $('#winCat');
+  const prev = sel.value;
+  const cats = state.settings.winCategories.length ? state.settings.winCategories : ['Other'];
+  fill(sel, cats.map(c => h('option', { value: c }, c)));
+  if (cats.includes(prev)) sel.value = prev;
+
+  const d = getDay(viewDate);
+  const box = $('#winList');
+  if (!d.wins.length) {
+    fill(box, h('p', { class: 'empty' }, 'No wins logged for this day yet. Small ones count too!'));
+  } else {
+    fill(box, h('ul', { class: 'plain' }, d.wins.map(w =>
+      h('li', { class: 'win' },
+        h('span', { class: 'chip accent' }, w.cat || 'Other'),
+        h('input', {
+          type: 'text', class: 'task-text', value: w.text, 'aria-label': 'Win',
+          oninput: e => { const it = getDay(viewDate, true).wins.find(x => x.id === w.id); if (it) { it.text = e.target.value; save(); } }
+        }),
+        h('button', {
+          class: 'icon-btn', type: 'button', title: 'Delete', 'aria-label': 'Delete win',
+          onclick: () => {
+            const k = viewDate, dd = getDay(k, true), pos = dd.wins.findIndex(x => x.id === w.id);
+            if (pos < 0) return;
+            const [removed] = dd.wins.splice(pos, 1);
+            save(); renderWins(); renderStats();
+            toast('Win deleted', { label: 'Undo', run: () => { getDay(k, true).wins.splice(pos, 0, removed); save(); renderWins(); renderStats(); } });
+          }
+        }, icon('x'))))));
+  }
+
+  const ws = weekStart(viewDate);
+  let week = 0, month = 0;
+  const monthPrefix = viewDate.slice(0, 7);
+  for (const [k, day] of Object.entries(state.days)) {
+    const n = (day.wins || []).length;
+    if (!n) continue;
+    if (k >= ws && k <= addDays(ws, 6)) week += n;
+    if (k.startsWith(monthPrefix)) month += n;
+  }
+  $('#winCounts').textContent = `Week: ${week} · Month: ${month}`;
+}
+
+/* =====================================================================
+   14. DAILY NOTES, QUOTE, VERSE
+   Quote and verse are chosen from the date, so they stay the same all day.
+   ===================================================================== */
+function gcd(a, b) { return b ? gcd(b, a % b) : a; }
+function strideFor(len, start) { let s = start; while (gcd(s, len) !== 1) s++; return s; }
+
+function renderNotesQuoteVerse() {
+  const d = getDay(viewDate);
+  $('#notesSub').textContent = isToday() ? 'Today' : fmtDateShort(viewDate);
+  $('#dailyNotes').value = d.notes || '';
+
+  const n = dayNumber(viewDate);
+  const q = QUOTES[((n % QUOTES.length) + QUOTES.length) % QUOTES.length];
+  $('#quoteText').textContent = q[0];
+  $('#quoteAuthor').textContent = '— ' + q[1];
+
+  // A different "stride" walks through the verses in a different order than the quotes
+  const stride = strideFor(VERSES.length, 37);
+  const v = VERSES[(((n * stride + 11) % VERSES.length) + VERSES.length) % VERSES.length];
+  $('#verseText').textContent = v[0];
+  $('#verseRef').textContent = v[1];
+}
+
+/* =====================================================================
+   15. STICKY NOTES (persistent, not per day)
+   ===================================================================== */
+function renderSticky() {
+  const notes = state.stickyNotes;
+  const body = $('#stickyBody');
+  if (!notes.length) {
+    fill(body, h('p', { class: 'empty' }, 'No notes. Click "+ New note" to add one.'));
+    return;
+  }
+  fill(body, h('div', { class: 'sticky-grid' }, notes.map((n, i) =>
+    h('div', { class: 'sticky' },
+      h('div', { class: 'sticky-head' },
+        h('input', { type: 'text', value: n.title || '', placeholder: 'Title', 'aria-label': 'Note title', oninput: e => { n.title = e.target.value; save(); } }),
+        h('button', { class: 'icon-btn', type: 'button', title: 'Move earlier', 'aria-label': 'Move note earlier', disabled: i === 0, onclick: () => { moveItem(notes, i, -1); save(); renderSticky(); } }, icon('chevL')),
+        h('button', { class: 'icon-btn', type: 'button', title: 'Move later', 'aria-label': 'Move note later', disabled: i === notes.length - 1, onclick: () => { moveItem(notes, i, 1); save(); renderSticky(); } }, icon('chevR')),
+        h('button', {
+          class: 'icon-btn', type: 'button', title: 'Delete note', 'aria-label': 'Delete note',
+          onclick: async () => {
+            if (!(await askConfirm(`Delete the note "${n.title || 'Untitled'}"? This can't be undone.`))) return;
+            state.stickyNotes = state.stickyNotes.filter(x => x.id !== n.id);
+            save(); renderSticky();
+          }
+        }, icon('x'))),
+      h('textarea', { 'aria-label': 'Note text', placeholder: 'Write anything…', value: n.body || '', oninput: e => { n.body = e.target.value; save(); } })))));
+}
+
+/* =====================================================================
+   16. LINKS + GITLAB QUICK OPEN
+   ===================================================================== */
+let linksEditing = false;
+
+function renderLinks() {
+  $('#editLinksBtn').textContent = linksEditing ? 'Done' : 'Edit';
+  const body = $('#linksBody');
+  const links = state.links;
+  if (!linksEditing) {
+    fill(body, links.length
+      ? h('div', { class: 'link-grid' }, links.map(l => {
+        const unset = !l.url || l.url === '#';
+        return h('a', {
+          class: 'btn', href: unset ? '#' : l.url, target: unset ? null : '_blank', rel: 'noopener',
+          title: unset ? 'No address yet. Click Edit to add it.' : l.url,
+          onclick: unset ? e => { e.preventDefault(); toast(`Add the address for "${l.name}" using Edit.`); } : null
+        }, l.name || '(no name)');
+      }))
+      : h('p', { class: 'empty' }, 'No links yet. Click Edit to add some.'));
+    return;
+  }
+  fill(body, h('div', { class: 'edit-stack' },
+    links.map((l, i) => h('div', { class: 'edit-row' },
+      h('input', { type: 'text', value: l.name, placeholder: 'Name', 'aria-label': 'Link name', oninput: e => { l.name = e.target.value; save(); } }),
+      h('input', { type: 'url', value: l.url === '#' ? '' : l.url, placeholder: 'https://…', 'aria-label': 'Link address', oninput: e => { l.url = e.target.value.trim() || '#'; save(); } }),
+      h('button', { class: 'icon-btn', type: 'button', title: 'Move up', 'aria-label': 'Move up', disabled: i === 0, onclick: () => { moveItem(links, i, -1); save(); renderLinks(); } }, icon('up')),
+      h('button', { class: 'icon-btn', type: 'button', title: 'Move down', 'aria-label': 'Move down', disabled: i === links.length - 1, onclick: () => { moveItem(links, i, 1); save(); renderLinks(); } }, icon('down')),
+      h('button', { class: 'icon-btn', type: 'button', title: 'Delete', 'aria-label': 'Delete link', onclick: () => { state.links = links.filter(x => x.id !== l.id); save(); renderLinks(); } }, icon('x')))),
+    h('div', null, h('button', { class: 'btn small', type: 'button', onclick: () => { links.push({ id: uid(), name: '', url: '#' }); save(); renderLinks(); } }, '+ Add link'))));
+}
+
+function openGitlab() {
+  const base = (state.settings.gitlabBaseUrl || '').trim().replace(/\/+$/, '');
+  let raw = $('#glNumber').value.trim();
+  let kind = $('#glKind').value;
+  if (raw.startsWith('!')) kind = 'mr';      // GitLab writes MRs as !123
+  if (raw.startsWith('#')) kind = 'issue';   // and issues as #123
+  raw = raw.replace(/^[#!]/, '');
+  if (!base) { toast('Set your GitLab project URL in Settings first.'); return; }
+  if (!/^\d+$/.test(raw)) { toast('Type an issue or merge request number.'); return; }
+  window.open(`${base}/-/${kind === 'mr' ? 'merge_requests' : 'issues'}/${raw}`, '_blank', 'noopener');
+  $('#glNumber').value = '';
+}
+
+/* =====================================================================
+   17. COUNTDOWNS
+   ===================================================================== */
+let countdownsEditing = false;
+
+function countdownLabel(k) {
+  const n = daysBetween(today, k);
+  if (n === 0) return 'Today! 🎉';
+  if (n === 1) return 'Tomorrow';
+  if (n > 1) return `${n} days`;
+  return `${-n} day${n === -1 ? '' : 's'} ago`;
+}
+
+function renderCountdowns() {
+  $('#editCountdownsBtn').textContent = countdownsEditing ? 'Done' : 'Edit';
+  const body = $('#countdownsBody');
+  if (!countdownsEditing) {
+    const shown = state.countdowns.filter(c => c.date && daysBetween(today, c.date) >= -7)
+      .sort((a, b) => a.date.localeCompare(b.date));
+    fill(body, shown.length
+      ? h('ul', { class: 'plain' }, shown.map(c => h('li', { class: 'countdown' + (c.date < today ? ' passed' : '') },
+        h('span', null, c.name || '(unnamed)', h('span', { class: 'small muted' }, ' · ' + fmtDateMed(c.date))),
+        h('span', { class: 'cd-days' }, countdownLabel(c.date)))))
+      : h('p', { class: 'empty' }, 'Nothing to count down to. Click Edit to add a date.'));
+    return;
+  }
+  fill(body, h('div', { class: 'edit-stack' },
+    state.countdowns.map(c => h('div', { class: 'edit-row' },
+      h('input', { type: 'text', value: c.name, placeholder: 'Name (e.g. PTO)', 'aria-label': 'Countdown name', oninput: e => { c.name = e.target.value; save(); } }),
+      h('input', { type: 'date', value: c.date || '', 'aria-label': 'Countdown date', style: 'flex:0 0 auto', onchange: e => { c.date = e.target.value; save(); } }),
+      h('button', { class: 'icon-btn', type: 'button', title: 'Delete', 'aria-label': 'Delete countdown', onclick: () => { state.countdowns = state.countdowns.filter(x => x.id !== c.id); save(); renderCountdowns(); } }, icon('x')))),
+    h('div', null, h('button', { class: 'btn small', type: 'button', onclick: () => { state.countdowns.push({ id: uid(), name: '', date: addDays(today, 7) }); save(); renderCountdowns(); } }, '+ Add countdown')),
+    h('p', { class: 'small muted' }, 'Dates that passed more than a week ago are hidden automatically.')));
+}
+
+/* =====================================================================
+   18. FOCUS TIMER (Pomodoro)
+   Kept in memory only. Uses an end timestamp so it stays accurate.
+   ===================================================================== */
+const focus = { mode: 'focus', running: false, endAt: 0, remaining: null };
+let audioCtx = null;
+
+const focusLength = mode => Math.max(1, Number(mode === 'focus' ? state.settings.focusMinutes : state.settings.breakMinutes) || 1) * 60;
+const mmss = s => `${pad(Math.floor(s / 60))}:${pad(s % 60)}`;
+
+function ensureAudio() {
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+  } catch (e) { /* audio not available */ }
+}
+
+function beep() {
+  try {
+    ensureAudio();
+    if (!audioCtx) return;
+    const t0 = audioCtx.currentTime;
+    [0, 0.35, 0.7].forEach(off => {
+      const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+      osc.type = 'sine'; osc.frequency.value = 880;
+      gain.gain.setValueAtTime(0.0001, t0 + off);
+      gain.gain.exponentialRampToValueAtTime(0.25, t0 + off + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t0 + off + 0.25);
+      osc.connect(gain).connect(audioCtx.destination);
+      osc.start(t0 + off); osc.stop(t0 + off + 0.3);
+    });
+  } catch (e) { /* ignore */ }
+}
+
+function notify(msg) {
+  toast(msg);
+  try {
+    if ('Notification' in window && Notification.permission === 'granted') new Notification('Dashboard', { body: msg });
+  } catch (e) { /* notifications not available */ }
+}
+
+function renderFocus() {
+  if (focus.remaining == null) focus.remaining = focusLength(focus.mode);
+  const modeEl = $('#focusMode');
+  modeEl.textContent = focus.mode === 'focus' ? '● Focus' : '● Break';
+  modeEl.classList.toggle('is-focus', focus.mode === 'focus');
+  $('#focusStartBtn').textContent = focus.running ? 'Pause' : 'Start';
+  $('#focusSwitchBtn').textContent = focus.mode === 'focus' ? 'Switch to break' : 'Switch to focus';
+  const count = getDay(today).pomos || 0;
+  $('#focusCount').textContent = `${count} session${count === 1 ? '' : 's'} today`;
+  $('#focusNotifyBtn').hidden = !('Notification' in window) || Notification.permission !== 'default';
+  updateFocusDisplay();
+}
+
+function updateFocusDisplay() {
+  $('#focusTime').textContent = mmss(focus.remaining);
+  document.title = focus.running ? `${mmss(focus.remaining)} ${focus.mode === 'focus' ? 'Focus' : 'Break'} · ${BASE_TITLE}` : BASE_TITLE;
+}
+
+function focusTick() {
+  if (!focus.running) return;
+  const rem = Math.ceil((focus.endAt - Date.now()) / 1000);
+  if (rem > 0) { focus.remaining = rem; updateFocusDisplay(); return; }
+  focus.running = false;
+  const finished = focus.mode;
+  if (finished === 'focus') { const d = getDay(today, true); d.pomos = (d.pomos || 0) + 1; save(); }
+  beep();
+  notify(finished === 'focus' ? 'Focus session done. Time for a break!' : 'Break is over. Ready to focus?');
+  focus.mode = finished === 'focus' ? 'break' : 'focus';
+  focus.remaining = focusLength(focus.mode);
+  renderFocus();
+}
+
+/* =====================================================================
+   19. SNIPPETS
+   ===================================================================== */
+let snippetsEditing = false;
+
+function renderSnippets() {
+  $('#editSnippetsBtn').textContent = snippetsEditing ? 'Done' : 'Edit';
+  const body = $('#snippetsBody');
+  const list = state.snippets;
+  if (!snippetsEditing) {
+    fill(body, list.length
+      ? h('div', { class: 'edit-stack' }, list.map(s => h('div', { class: 'snippet' },
+        h('div', { class: 'row', style: 'justify-content:space-between' },
+          h('strong', { class: 'small' }, s.title || '(untitled)'),
+          h('button', {
+            class: 'btn small', type: 'button', onclick: async ev => {
+              const btn = ev.currentTarget;
+              const ok = await copyText(s.content || '');
+              btn.textContent = ok ? 'Copied!' : 'Copy failed';
+              setTimeout(() => { btn.textContent = 'Copy'; }, 1400);
+            }
+          }, 'Copy')),
+        h('pre', null, s.content || ''))))
+      : h('p', { class: 'empty' }, 'No snippets yet. Click Edit to add some.'));
+    return;
+  }
+  fill(body, h('div', { class: 'edit-stack' },
+    list.map((s, i) => h('div', { class: 'snippet-edit' },
+      h('div', { class: 'edit-row' },
+        h('input', { type: 'text', value: s.title, placeholder: 'Title', 'aria-label': 'Snippet title', oninput: e => { s.title = e.target.value; save(); } }),
+        h('button', { class: 'icon-btn', type: 'button', title: 'Move up', 'aria-label': 'Move up', disabled: i === 0, onclick: () => { moveItem(list, i, -1); save(); renderSnippets(); } }, icon('up')),
+        h('button', { class: 'icon-btn', type: 'button', title: 'Move down', 'aria-label': 'Move down', disabled: i === list.length - 1, onclick: () => { moveItem(list, i, 1); save(); renderSnippets(); } }, icon('down')),
+        h('button', { class: 'icon-btn', type: 'button', title: 'Delete', 'aria-label': 'Delete snippet', onclick: () => { state.snippets = list.filter(x => x.id !== s.id); save(); renderSnippets(); } }, icon('x'))),
+      h('textarea', { value: s.content, placeholder: 'Text to copy', 'aria-label': 'Snippet text', oninput: e => { s.content = e.target.value; save(); } }))),
+    h('div', null, h('button', { class: 'btn small', type: 'button', onclick: () => { list.push({ id: uid(), title: '', content: '' }); save(); renderSnippets(); } }, '+ Add snippet'))));
+}
+
+/* =====================================================================
+   20. HISTORY (calendar picker)
+   ===================================================================== */
+let calMonth = today.slice(0, 7); // "YYYY-MM"
+
+function openHistory() {
+  calMonth = viewDate.slice(0, 7);
+  renderHistory();
+  $('#historyDialog').showModal();
+}
+
+function renderHistory() {
+  const [y, m] = calMonth.split('-').map(Number);
+  const first = new Date(y, m - 1, 1);
+  const lead = (first.getDay() + 6) % 7; // Monday-first calendar
+  const dim = new Date(y, m, 0).getDate();
+  const shiftMonth = delta => { const d = new Date(y, m - 1 + delta, 1); calMonth = `${d.getFullYear()}-${pad(d.getMonth() + 1)}`; renderHistory(); };
+  const go = k => { setViewDate(k); $('#historyDialog').close(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+
+  const cells = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(d => h('div', { class: 'dow' }, d));
+  for (let i = 0; i < lead; i++) cells.push(h('div'));
+  for (let day = 1; day <= dim; day++) {
+    const k = `${calMonth}-${pad(day)}`;
+    cells.push(h('button', {
+      type: 'button',
+      class: [hasData(k) ? 'has-data' : '', k === today ? 'is-today' : '', k === viewDate ? 'is-selected' : ''].join(' ').trim(),
+      'aria-label': fmtDateLong(k) + (hasData(k) ? ' (has entries)' : ''),
+      onclick: () => go(k)
+    }, day));
+  }
+
+  const recent = Object.keys(state.days).filter(hasData).sort().reverse().slice(0, 10);
+  fill($('#historyBody'),
+    h('div', { class: 'cal-head' },
+      h('button', { class: 'round sm', type: 'button', 'aria-label': 'Previous month', onclick: () => shiftMonth(-1) }, icon('chevL')),
+      h('strong', null, first.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })),
+      h('button', { class: 'round sm', type: 'button', 'aria-label': 'Next month', onclick: () => shiftMonth(1) }, icon('chevR'))),
+    h('div', { class: 'cal' }, cells),
+    h('div', { class: 'row' },
+      h('button', { class: 'btn primary small', type: 'button', onclick: () => go(today) }, 'Go to today'),
+      h('span', { class: 'small muted' }, 'Dots mark days with saved entries.')),
+    h('div', { class: 'subsection' }, h('h3', null, 'Recent days with entries'),
+      recent.length ? h('div', { class: 'row' }, recent.map(k => h('button', { class: 'btn small', type: 'button', onclick: () => go(k) }, fmtDateShort(k))))
+        : h('p', { class: 'empty' }, 'Nothing saved yet.')));
+}
+
+/* =====================================================================
+   21. SEARCH
+   ===================================================================== */
+function snippetAround(text, q) {
+  const i = text.toLowerCase().indexOf(q);
+  const start = Math.max(0, i - 60);
+  return (start > 0 ? '…' : '') + text.slice(start, i + q.length + 90) + (i + q.length + 90 < text.length ? '…' : '');
+}
+
+function highlight(text, q) {
+  const out = [];
+  const lower = text.toLowerCase();
+  let pos = 0, i;
+  while ((i = lower.indexOf(q, pos)) !== -1) {
+    out.push(text.slice(pos, i), h('mark', null, text.slice(i, i + q.length)));
+    pos = i + q.length;
+  }
+  out.push(text.slice(pos));
+  return out;
+}
+
+function runSearch() {
+  const q = $('#searchInput').value.trim().toLowerCase();
+  const box = $('#searchResults');
+  if (q.length < 2) { fill(box, h('p', { class: 'empty' }, 'Search your objectives, wins, daily notes and sticky notes.')); return; }
+
+  const results = [];
+  const add = (date, type, text) => { if (text && text.toLowerCase().includes(q)) results.push({ date, type, text: snippetAround(text, q) }); };
+  for (const n of state.stickyNotes) add(null, 'Sticky note', `${n.title ? n.title + ': ' : ''}${n.body || ''}`);
+  for (const k of Object.keys(state.days).sort().reverse()) {
+    const d = state.days[k];
+    (d.todos || []).forEach(t => add(k, t.done ? 'Objective ✓' : 'Objective', t.text));
+    (d.wins || []).forEach(w => add(k, 'Win · ' + (w.cat || 'Other'), w.text));
+    add(k, 'Daily notes', d.notes);
+  }
+  if (!results.length) { fill(box, h('p', { class: 'empty' }, 'No matches.')); return; }
+  fill(box, h('p', { class: 'small muted' }, `${results.length} match${results.length === 1 ? '' : 'es'}`),
+    h('ul', { class: 'plain', style: 'margin-top:.5rem' }, results.slice(0, 200).map(r => h('li', null, h('button', {
+      class: 'result', type: 'button',
+      onclick: () => {
+        $('#searchDialog').close();
+        if (r.date) { setViewDate(r.date); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+        else document.querySelector('[data-panel="sticky"]').scrollIntoView({ behavior: 'smooth' });
+      }
+    }, h('span', { class: 'small muted' }, (r.date ? fmtDateLong(r.date) : 'Sticky notes') + ' · ' + r.type), h('span', null, highlight(r.text, q)))))));
+}
+
+/* =====================================================================
+   22. REPORT GENERATOR (for monthly / quarterly 1:1s)
+   ===================================================================== */
+let lastReport = null;
+
+function rangeForPreset(p) {
+  const t = parseKey(today);
+  const y = t.getFullYear(), m = t.getMonth();
+  const mk = (yy, mm, dd) => dateKey(new Date(yy, mm, dd));
+  switch (p) {
+    case 'thisMonth': return [mk(y, m, 1), mk(y, m + 1, 0)];
+    case 'lastMonth': return [mk(y, m - 1, 1), mk(y, m, 0)];
+    case 'thisQuarter': { const q = Math.floor(m / 3) * 3; return [mk(y, q, 1), mk(y, q + 3, 0)]; }
+    case 'lastQuarter': { const q = Math.floor(m / 3) * 3 - 3; return [mk(y, q, 1), mk(y, q + 3, 0)]; }
+    default: return null;
+  }
+}
+
+function applyReportPreset() {
+  const r = rangeForPreset($('#reportPreset').value);
+  if (r) { $('#reportFrom').value = r[0]; $('#reportTo').value = r[1]; }
+}
+
+function buildReport(from, to, includeNotes) {
+  const winsByCat = {};
+  const doneByWeek = {};
+  const notes = [];
+  let total = 0, daysWorked = 0, winCount = 0, doneCount = 0;
+  for (let k = from; k <= to; k = addDays(k, 1)) {
+    const d = state.days[k];
+    if (!d) continue;
+    const worked = computeDay(k).worked;
+    if (worked > 0) { total += worked; daysWorked++; }
+    for (const w of d.wins || []) {
+      if (!w.text) continue;
+      (winsByCat[w.cat || 'Other'] ||= []).push({ date: k, text: w.text });
+      winCount++;
+    }
+    for (const t of d.todos || []) {
+      if (!t.done || !t.text) continue;
+      (doneByWeek[weekStart(k)] ||= []).push({ date: k, text: t.text });
+      doneCount++;
+    }
+    if (includeNotes && String(d.notes || '').trim()) notes.push({ date: k, text: d.notes.trim() });
+  }
+  return { from, to, name: state.settings.name, winsByCat, doneByWeek, notes, includeNotes, total, daysWorked, winCount, doneCount };
+}
+
+function reportToMarkdown(r) {
+  const L = [];
+  L.push(`# Work Summary: ${fmtDateMed(r.from)} – ${fmtDateMed(r.to)}`);
+  if (r.name) L.push(`*${r.name}*`);
+  L.push('', '## Hours');
+  L.push(`- Total hours: **${fmtDuration(r.total)}**`);
+  L.push(`- Days worked: ${r.daysWorked}`);
+  L.push(`- Average per day worked: ${r.daysWorked ? fmtDuration(r.total / r.daysWorked) : '—'}`);
+  L.push('', `## Wins (${r.winCount})`);
+  const cats = Object.keys(r.winsByCat);
+  if (!cats.length) L.push('_No wins logged in this period._');
+  for (const c of cats) {
+    L.push('', `### ${c}`);
+    r.winsByCat[c].forEach(w => L.push(`- ${w.text} _(${fmtDateShort(w.date)})_`));
+  }
+  L.push('', `## Completed objectives (${r.doneCount})`);
+  const weeks = Object.keys(r.doneByWeek).sort();
+  if (!weeks.length) L.push('_No completed objectives in this period._');
+  for (const w of weeks) {
+    L.push('', `### Week of ${fmtDateMed(w)}`);
+    r.doneByWeek[w].forEach(t => L.push(`- ${t.text}`));
+  }
+  if (r.includeNotes) {
+    L.push('', '## Daily notes');
+    if (!r.notes.length) L.push('_No notes in this period._');
+    r.notes.forEach(n => L.push('', `**${fmtDateLong(n.date)}**`, n.text));
+  }
+  return L.join('\n');
+}
+
+function reportToPlain(r) {
+  const L = [];
+  L.push(`WORK SUMMARY: ${fmtDateMed(r.from)} – ${fmtDateMed(r.to)}`);
+  if (r.name) L.push(r.name);
+  L.push('', 'HOURS');
+  L.push(`  Total hours: ${fmtDuration(r.total)}`);
+  L.push(`  Days worked: ${r.daysWorked}`);
+  L.push(`  Average per day worked: ${r.daysWorked ? fmtDuration(r.total / r.daysWorked) : '—'}`);
+  L.push('', `WINS (${r.winCount})`);
+  const cats = Object.keys(r.winsByCat);
+  if (!cats.length) L.push('  No wins logged in this period.');
+  for (const c of cats) {
+    L.push(`  ${c}:`);
+    r.winsByCat[c].forEach(w => L.push(`    • ${w.text} (${fmtDateShort(w.date)})`));
+  }
+  L.push('', `COMPLETED OBJECTIVES (${r.doneCount})`);
+  const weeks = Object.keys(r.doneByWeek).sort();
+  if (!weeks.length) L.push('  No completed objectives in this period.');
+  for (const w of weeks) {
+    L.push(`  Week of ${fmtDateMed(w)}:`);
+    r.doneByWeek[w].forEach(t => L.push(`    • ${t.text}`));
+  }
+  if (r.includeNotes) {
+    L.push('', 'DAILY NOTES');
+    if (!r.notes.length) L.push('  No notes in this period.');
+    r.notes.forEach(n => L.push(`  ${fmtDateLong(n.date)}:`, ...n.text.split('\n').map(x => '    ' + x)));
+  }
+  return L.join('\n');
+}
+
+function reportToElement(r) {
+  const cats = Object.keys(r.winsByCat);
+  const weeks = Object.keys(r.doneByWeek).sort();
+  return h('div', { class: 'report-preview' },
+    h('h1', null, `Work Summary: ${fmtDateMed(r.from)} – ${fmtDateMed(r.to)}`),
+    r.name ? h('div', { class: 'muted' }, r.name) : null,
+    h('h2', null, 'Hours'),
+    h('ul', null,
+      h('li', null, 'Total hours: ', h('strong', null, fmtDuration(r.total))),
+      h('li', null, `Days worked: ${r.daysWorked}`),
+      h('li', null, `Average per day worked: ${r.daysWorked ? fmtDuration(r.total / r.daysWorked) : '—'}`)),
+    h('h2', null, `Wins (${r.winCount})`),
+    cats.length ? cats.map(c => [h('h3', null, c), h('ul', null, r.winsByCat[c].map(w => h('li', null, w.text, h('span', { class: 'muted' }, ` (${fmtDateShort(w.date)})`))))])
+      : h('p', { class: 'empty' }, 'No wins logged in this period.'),
+    h('h2', null, `Completed objectives (${r.doneCount})`),
+    weeks.length ? weeks.map(w => [h('h3', null, 'Week of ' + fmtDateMed(w)), h('ul', null, r.doneByWeek[w].map(t => h('li', null, t.text)))])
+      : h('p', { class: 'empty' }, 'No completed objectives in this period.'),
+    r.includeNotes ? [h('h2', null, 'Daily notes'),
+      r.notes.length ? r.notes.map(n => [h('h3', null, fmtDateLong(n.date)), h('p', { style: 'white-space:pre-wrap;margin:.2rem 0' }, n.text)])
+        : h('p', { class: 'empty' }, 'No notes in this period.')] : null);
+}
+
+function generateReport() {
+  let from = $('#reportFrom').value, to = $('#reportTo').value;
+  if (!from || !to) { toast('Pick a start and end date.'); return; }
+  if (from > to) [from, to] = [to, from];
+  lastReport = buildReport(from, to, $('#reportNotes').checked);
+  fill($('#reportPreview'), reportToElement(lastReport));
+  ['#reportCopyText', '#reportCopyMd', '#reportPrint'].forEach(s => { $(s).disabled = false; });
+}
+
+/* =====================================================================
+   23. SETTINGS (including the recurring meeting editor) + BACKUP
+   Every change saves immediately. Closing the dialog refreshes the page.
+   ===================================================================== */
+function field(label, input) { return h('label', { class: 'field' }, h('span', null, label), input); }
+
+function renderSettings() {
+  const s = state.settings;
+  const panelChecks = h('div', { class: 'panel-checks' }, PANELS.map(p => h('label', { class: 'check-row' },
+    h('input', {
+      type: 'checkbox', checked: !s.hiddenPanels.includes(p.id), onchange: e => {
+        s.hiddenPanels = e.target.checked ? s.hiddenPanels.filter(x => x !== p.id) : [...s.hiddenPanels, p.id];
+        save(); applyPanelVisibility();
+      }
+    }), p.name)));
+
+  fill($('#settingsBody'),
+    h('div', { class: 'setting-group' }, h('h3', null, 'You'),
+      field('Your first name (for the greeting)', h('input', { type: 'text', value: s.name, oninput: e => { s.name = e.target.value; save(); updateHeaderClock(); } }))),
+
+    h('div', { class: 'setting-group' }, h('h3', null, 'Time clock'),
+      field('Target hours per day', h('input', { type: 'number', min: '1', max: '16', step: '0.5', value: s.targetHours, style: 'max-width:8rem', oninput: e => { const v = Number(e.target.value); if (v > 0) { s.targetHours = v; save(); } } })),
+      h('label', { class: 'check-row' }, h('input', { type: 'checkbox', checked: !!s.breaksPaid, onchange: e => { s.breaksPaid = e.target.checked; save(); } }),
+        'Breaks are paid (count breaks as worked time)')),
+
+    h('div', { class: 'setting-group' }, h('h3', null, 'GitLab'),
+      field('Project URL (e.g. https://gitlab.mycompany.com/group/project)', h('input', { type: 'url', value: s.gitlabBaseUrl, placeholder: 'https://gitlab.example.com/group/project', oninput: e => { s.gitlabBaseUrl = e.target.value.trim(); save(); } }))),
+
+    h('div', { class: 'setting-group' }, h('h3', null, 'Win categories'),
+      field('One per line', h('textarea', {
+        value: s.winCategories.join('\n'), style: 'min-height:6rem',
+        oninput: e => { s.winCategories = e.target.value.split('\n').map(x => x.trim()).filter(Boolean); save(); }
+      }))),
+
+    h('div', { class: 'setting-group' }, h('h3', null, 'Focus timer'),
+      h('div', { class: 'row' },
+        field('Focus minutes', h('input', { type: 'number', min: '1', max: '180', value: s.focusMinutes, style: 'max-width:7rem', oninput: e => { const v = Number(e.target.value); if (v > 0) { s.focusMinutes = v; save(); } } })),
+        field('Break minutes', h('input', { type: 'number', min: '1', max: '60', value: s.breakMinutes, style: 'max-width:7rem', oninput: e => { const v = Number(e.target.value); if (v > 0) { s.breakMinutes = v; save(); } } })))),
+
+    h('div', { class: 'setting-group' }, h('h3', null, 'Sections to show'), panelChecks),
+
+    h('div', { class: 'setting-group', id: 'meetingSettings' }, h('h3', null, 'Recurring meetings'),
+      h('p', { class: 'small muted' }, 'Describe each regular meeting once. The dashboard works out which ones fall on each day. To cancel a single day, use "Skip" on the main page.'),
+      h('div', { id: 'meetingEditor', class: 'edit-stack' }),
+      h('div', null, h('button', {
+        class: 'btn small', type: 'button', onclick: () => {
+          state.meetings.push({ id: uid(), title: '', start: '09:00', end: '09:30', link: '', notes: '', rule: { type: 'weekly', days: [1, 2, 3, 4, 5] }, startDate: '', endDate: '' });
+          save(); renderMeetingEditor();
+        }
+      }, '+ Add recurring meeting')),
+      h('div', { class: 'subsection' }, h('h3', null, 'Check your rules'),
+        h('div', { class: 'row' }, h('span', { class: 'small' }, 'Show meetings on:'),
+          h('input', { type: 'date', id: 'meetingPreviewDate', value: today, onchange: renderMeetingPreview })),
+        h('div', { id: 'meetingPreview' }))),
+
+    h('div', { class: 'setting-group' }, h('h3', null, 'Backup'),
+      h('p', { class: 'small muted' }, 'Your data is stored in this Chrome profile only. Export a backup now and then and keep it somewhere safe (e.g. OneDrive).'),
+      h('div', { class: 'row' },
+        h('button', { class: 'btn primary', type: 'button', onclick: exportData }, 'Export backup'),
+        h('button', { class: 'btn', type: 'button', onclick: () => $('#importFile').click() }, 'Import backup')))
+  );
+  renderMeetingEditor();
+}
+
+function renderMeetingEditor() {
+  const box = $('#meetingEditor');
+  if (!box) return;
+  fill(box, state.meetings.length ? state.meetings.map(meetingCard) : h('p', { class: 'empty' }, 'No recurring meetings yet.'));
+  renderMeetingPreview();
+}
+
+function meetingCard(m) {
+  m.rule ||= { type: 'weekly', days: [1, 2, 3, 4, 5] };
+  const r = m.rule;
+  const summary = h('div', { class: 'small muted' }, describeRule(m));
+  const changed = () => { save(); summary.textContent = describeRule(m); renderMeetingPreview(); };
+
+  const dayChecks = () => h('div', { class: 'day-checks' }, [1, 2, 3, 4, 5, 6, 0].map(d => h('label', null,
+    h('input', {
+      type: 'checkbox', checked: (r.days || []).includes(d), onchange: e => {
+        r.days = e.target.checked ? [...new Set([...(r.days || []), d])] : (r.days || []).filter(x => x !== d);
+        changed();
+      }
+    }), DAY_NAMES[d])));
+
+  let ruleFields;
+  switch (r.type) {
+    case 'everyNWeeks':
+      ruleFields = [dayChecks(), h('div', { class: 'grid-fields' },
+        field('Every how many weeks?', h('input', { type: 'number', min: '1', max: '12', value: r.interval || 2, oninput: e => { r.interval = Math.max(1, Number(e.target.value) || 1); changed(); } })),
+        field('A date it happens on', h('input', { type: 'date', value: r.anchor || '', onchange: e => { r.anchor = e.target.value; changed(); } })))];
+      break;
+    case 'monthlyNth':
+      ruleFields = h('div', { class: 'grid-fields' },
+        field('Which', mkSelect([['1', '1st'], ['2', '2nd'], ['3', '3rd'], ['4', '4th'], ['-1', 'Last']], r.nth ?? 1, { onchange: e => { r.nth = Number(e.target.value); changed(); } })),
+        field('Weekday', mkSelect(DAY_NAMES_LONG.map((n, i) => [String(i), n]), r.weekday ?? 1, { onchange: e => { r.weekday = Number(e.target.value); changed(); } })));
+      break;
+    case 'monthlyDay':
+      ruleFields = h('div', { class: 'grid-fields' },
+        field('Day of the month', h('input', { type: 'number', min: '1', max: '31', value: r.dayOfMonth || 1, oninput: e => { r.dayOfMonth = Math.min(31, Math.max(1, Number(e.target.value) || 1)); changed(); } })));
+      break;
+    default:
+      ruleFields = dayChecks();
+  }
+
+  const titleEl = h('strong', null, m.title || 'New meeting');
+  const card = h('div', { class: 'meeting-card' },
+    h('div', { class: 'row', style: 'justify-content:space-between' },
+      titleEl,
+      h('button', {
+        class: 'btn small danger', type: 'button', onclick: async () => {
+          if (!(await askConfirm(`Delete the recurring meeting "${m.title || 'untitled'}"?`))) return;
+          state.meetings = state.meetings.filter(x => x.id !== m.id);
+          save(); renderMeetingEditor();
+        }
+      }, 'Delete')),
+    summary,
+    h('div', { class: 'grid-fields' },
+      field('Title', h('input', { type: 'text', value: m.title, oninput: e => { m.title = e.target.value; titleEl.textContent = m.title || 'New meeting'; changed(); } })),
+      field('Start', h('input', { type: 'time', value: m.start, onblur: e => { m.start = e.target.value; changed(); } })),
+      field('End', h('input', { type: 'time', value: m.end, onblur: e => { m.end = e.target.value; changed(); } })),
+      field('Repeats', mkSelect([['weekly', 'Weekly'], ['everyNWeeks', 'Every N weeks'], ['monthlyNth', 'Monthly: Nth weekday'], ['monthlyDay', 'Monthly: day number']], r.type, {
+        onchange: e => {
+          r.type = e.target.value;
+          if (r.type === 'everyNWeeks') { r.interval ||= 2; r.anchor ||= today; if (!(r.days || []).length) r.days = [parseKey(today).getDay()]; }
+          if (r.type === 'monthlyNth') { r.nth ??= 1; r.weekday ??= 1; }
+          if (r.type === 'monthlyDay') { r.dayOfMonth ||= 1; }
+          save(); card.replaceWith(meetingCard(m)); renderMeetingPreview();
+        }
+      }))),
+    ruleFields,
+    h('div', { class: 'grid-fields' },
+      field('Link (optional)', h('input', { type: 'text', value: m.link || '', placeholder: 'Teams link', oninput: e => { m.link = e.target.value.trim(); changed(); } })),
+      field('Notes (optional)', h('input', { type: 'text', value: m.notes || '', oninput: e => { m.notes = e.target.value; changed(); } })),
+      field('Starts on (optional)', h('input', { type: 'date', value: m.startDate || '', onchange: e => { m.startDate = e.target.value; changed(); } })),
+      field('Ends on (optional)', h('input', { type: 'date', value: m.endDate || '', onchange: e => { m.endDate = e.target.value; changed(); } }))));
+  return card;
+}
+
+function renderMeetingPreview() {
+  const box = $('#meetingPreview');
+  const input = $('#meetingPreviewDate');
+  if (!box || !input) return;
+  const k = input.value || today;
+  const list = meetingsForDate(k);
+  fill(box, list.length
+    ? h('ul', { class: 'plain' }, list.map(m => h('li', { class: 'small' }, `${fmtTime(parseHHMM(m.start))} · ${m.title || '(untitled)'}${m.skipped ? ' (skipped)' : ''}${m.kind === 'oneoff' ? ' (one-off)' : ''}`)))
+    : h('p', { class: 'empty' }, `No meetings on ${fmtDateLong(k)}.`));
+}
+
+function exportData() {
+  state.settings.lastBackup = new Date().toISOString();
+  saveNow();
+  try {
+    const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = h('a', { href: url, download: `dashboard-backup-${today}.json` });
+    document.body.append(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+    renderBackupStatus();
+    toast('Backup downloaded ✓');
+  } catch (e) {
+    console.error(e);
+    toast('Export failed. See console for details.');
+  }
+}
+
+function importData(file) {
+  const reader = new FileReader();
+  reader.onload = async () => {
+    let data;
+    try { data = JSON.parse(reader.result); } catch (e) { toast('That file is not a valid backup (it is not JSON).'); return; }
+    if (!data || typeof data !== 'object' || typeof data.days !== 'object' || typeof data.settings !== 'object') {
+      toast('That file does not look like a dashboard backup.');
+      return;
+    }
+    const n = Object.keys(data.days || {}).length;
+    const when = data.settings.lastBackup ? ` (exported ${new Date(data.settings.lastBackup).toLocaleString()})` : '';
+    if (!(await askConfirm(`Replace ALL current dashboard data with this backup${when}? It contains ${n} day(s) of history. Tip: export your current data first if you might want it back.`, 'Replace my data'))) return;
+    state = migrate(data);
+    saveNow();
+    renderAll();
+    if ($('#settingsDialog').open) renderSettings();
+    toast('Backup imported ✓');
+  };
+  reader.readAsText(file);
+}
+
+/* =====================================================================
+   24. RENDER EVERYTHING + WIRE UP EVENTS + START
+   ===================================================================== */
+function renderDayPanels() {
+  updateHeaderClock();
+  renderClock();
+  renderMeetings();
+  renderTodos();
+  renderWins();
+  renderNotesQuoteVerse();
+  renderStats();
+  renderChart();
+}
+
+function renderAll() {
+  applyTheme();
+  applyPanelVisibility();
+  renderBackupStatus();
+  renderViewBanner();
+  renderDayPanels();
+  renderSticky();
+  renderLinks();
+  renderCountdowns();
+  renderSnippets();
+  renderFocus();
+}
+
+function openSettings(scrollToMeetings) {
+  renderSettings();
+  $('#settingsDialog').showModal();
+  if (scrollToMeetings) $('#meetingSettings').scrollIntoView({ block: 'start' });
+}
+
+function wireEvents() {
+  // Fill in the icons written in the HTML
+  document.querySelectorAll('[data-icon]').forEach(el => el.replaceWith(icon(el.dataset.icon)));
+
+  // Theme selector
+  const themeSel = $('#themeSelect');
+  fill(themeSel, THEMES.map(t => h('option', { value: t.id }, t.name)));
+  themeSel.addEventListener('change', () => { state.settings.theme = themeSel.value; save(); applyTheme(); });
+
+  // Sidebar
+  $('#navToday').addEventListener('click', () => { setViewDate(today); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+  $('#navHistory').addEventListener('click', openHistory);
+  $('#navSearch').addEventListener('click', () => { $('#searchDialog').showModal(); runSearch(); $('#searchInput').focus(); });
+  $('#navReport').addEventListener('click', () => { if (!$('#reportFrom').value) applyReportPreset(); $('#reportDialog').showModal(); });
+  $('#navSettings').addEventListener('click', () => openSettings(false));
+  $('#exportBtn').addEventListener('click', exportData);
+  $('#importBtn').addEventListener('click', () => $('#importFile').click());
+  $('#importFile').addEventListener('change', e => { const f = e.target.files[0]; if (f) importData(f); e.target.value = ''; });
+
+  // Header date controls
+  $('#prevDayBtn').addEventListener('click', () => setViewDate(addDays(viewDate, -1)));
+  $('#nextDayBtn').addEventListener('click', () => setViewDate(addDays(viewDate, 1)));
+  $('#calendarBtn').addEventListener('click', openHistory);
+
+  // Close buttons inside dialogs, and refresh the page when Settings closes
+  document.querySelectorAll('dialog [data-close]').forEach(btn => btn.addEventListener('click', () => btn.closest('dialog').close()));
+  $('#settingsDialog').addEventListener('close', () => {
+    if (!focus.running) focus.remaining = focusLength(focus.mode);
+    renderAll();
+  });
+
+  // Chart week picker
+  $('#chartWeek').addEventListener('change', renderChart);
+  window.addEventListener('resize', () => { const tip = $('.chart-tip'); if (tip) tip.hidden = true; });
+
+  // Objectives
+  onSubmit('#todoForm', () => {
+    const text = $('#todoInput').value.trim();
+    if (!text) return;
+    getDay(viewDate, true).todos.push({ id: uid(), text, done: false, high: $('#todoHigh').checked, created: viewDate });
+    $('#todoInput').value = '';
+    $('#todoHigh').checked = false;
+    afterTodoChange();
+  });
+
+  // Wins
+  onSubmit('#winForm', () => {
+    const text = $('#winInput').value.trim();
+    if (!text) return;
+    getDay(viewDate, true).wins.push({ id: uid(), text, cat: $('#winCat').value || 'Other' });
+    $('#winInput').value = '';
+    save(); renderWins(); renderStats();
+    toast('Win logged 🏆');
+  });
+
+  // Daily notes
+  $('#dailyNotes').addEventListener('input', e => { getDay(viewDate, true).notes = e.target.value; save(); });
+
+  // Meetings
+  $('#editMeetingsBtn').addEventListener('click', () => openSettings(true));
+  onSubmit('#oneOffForm', () => {
+    const title = $('#ooTitle').value.trim();
+    const start = $('#ooStart').value;
+    if (!title || !start) { toast('Add a title and a start time.'); return; }
+    state.oneOffMeetings.push({ id: uid(), date: viewDate, title, start, end: $('#ooEnd').value, link: $('#ooLink').value.trim() });
+    ['#ooTitle', '#ooStart', '#ooEnd', '#ooLink'].forEach(sel => { $(sel).value = ''; });
+    $('#oneOffDetails').open = false;
+    save(); renderMeetings();
+  });
+
+  // Sticky notes, links, countdowns, snippets
+  $('#addStickyBtn').addEventListener('click', () => {
+    state.stickyNotes.push({ id: uid(), title: '', body: '' });
+    save(); renderSticky();
+    const inputs = document.querySelectorAll('#stickyBody .sticky-head input');
+    if (inputs.length) inputs[inputs.length - 1].focus();
+  });
+  $('#editLinksBtn').addEventListener('click', () => { linksEditing = !linksEditing; renderLinks(); });
+  onSubmit('#gitlabForm', openGitlab);
+  $('#editCountdownsBtn').addEventListener('click', () => { countdownsEditing = !countdownsEditing; renderCountdowns(); });
+  $('#editSnippetsBtn').addEventListener('click', () => { snippetsEditing = !snippetsEditing; renderSnippets(); });
+
+  // Focus timer
+  $('#focusStartBtn').addEventListener('click', () => {
+    ensureAudio();
+    if (focus.running) {
+      focus.remaining = Math.max(0, Math.ceil((focus.endAt - Date.now()) / 1000));
+      focus.running = false;
+    } else {
+      focus.endAt = Date.now() + focus.remaining * 1000;
+      focus.running = true;
+    }
+    renderFocus();
+  });
+  $('#focusResetBtn').addEventListener('click', () => { focus.running = false; focus.remaining = focusLength(focus.mode); renderFocus(); });
+  $('#focusSwitchBtn').addEventListener('click', () => { focus.mode = focus.mode === 'focus' ? 'break' : 'focus'; focus.running = false; focus.remaining = focusLength(focus.mode); renderFocus(); });
+  $('#focusNotifyBtn').addEventListener('click', () => {
+    try { Notification.requestPermission().then(renderFocus); } catch (e) { toast('Notifications are not available here.'); }
+  });
+
+  // Search & report
+  let searchTimer = null;
+  $('#searchInput').addEventListener('input', () => { clearTimeout(searchTimer); searchTimer = setTimeout(runSearch, 150); });
+  $('#reportPreset').addEventListener('change', applyReportPreset);
+  ['#reportFrom', '#reportTo'].forEach(s => $(s).addEventListener('change', () => { $('#reportPreset').value = 'custom'; }));
+  $('#reportGenerate').addEventListener('click', generateReport);
+  $('#reportCopyText').addEventListener('click', async () => toast(await copyText(reportToPlain(lastReport)) ? 'Report copied as plain text' : 'Copy failed'));
+  $('#reportCopyMd').addEventListener('click', async () => toast(await copyText(reportToMarkdown(lastReport)) ? 'Report copied as Markdown' : 'Copy failed'));
+  $('#reportPrint').addEventListener('click', () => {
+    fill($('#printArea'), reportToElement(lastReport));
+    $('#reportDialog').close();
+    setTimeout(() => window.print(), 50);
+  });
+
+  // Save right away if the tab is being closed or hidden
+  window.addEventListener('beforeunload', () => { if (saveTimer) saveNow(); });
+  document.addEventListener('visibilitychange', () => { if (document.hidden && saveTimer) saveNow(); });
+
+  // If the dashboard is open in two tabs, keep them in sync
+  window.addEventListener('storage', e => {
+    if (e.key !== STORAGE_KEY || !e.newValue) return;
+    try { state = migrate(JSON.parse(e.newValue)); clockEditId = null; renderAll(); } catch (err) { /* ignore */ }
+  });
+}
+
+/** Runs every second: clocks, timers, and the midnight roll-over. */
+let lastMinute = -1;
+function tick() {
+  const k = dateKey();
+  if (k !== today) {
+    const wasViewingToday = viewDate === today;
+    today = k;
+    if (wasViewingToday) viewDate = k;
+    clockEditId = null;
+    renderAll();
+    checkCarryOver();
+  }
+  updateHeaderClock();
+  if (isToday()) { updateClockLive(); renderStats(); }
+  focusTick();
+  const minute = new Date().getMinutes();
+  if (minute !== lastMinute) {
+    lastMinute = minute;
+    renderMeetings();
+    if (!countdownsEditing) renderCountdowns(); // don't wipe the edit form while typing
+    renderBackupStatus();
+    if (isToday()) renderChart();
+  }
+}
+
+function start() {
+  state = loadState();
+  wireEvents();
+  renderAll();
+  checkCarryOver();
+  setInterval(tick, 1000);
+}
+
+start();
+</script>
+</body>
+</html>
